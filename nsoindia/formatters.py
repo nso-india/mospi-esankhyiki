@@ -1,0 +1,177 @@
+"""
+Output format conversions for mospi API responses.
+
+Supported formats: "dict" (default), "df" / "dataframe", "csv"
+"""
+
+import io
+import csv as csv_mod
+from typing import Any, Union
+
+from .exceptions import APIError, NoDataError
+
+
+def _extract_records(result: dict) -> list:
+    """Extract the list of records from an API response dict.
+
+    Handles all response shapes:
+      - result["data"] = list               (most datasets)
+      - result["data"]["indicator"] = list   (NAS, ENERGY, CPIALRL)
+      - result["data"]["data"] = list        (some nested responses)
+      - result["data"] = dict with lists     (CPI indicators -flatten each sub-list)
+      - result["indicators_by_frequency"]    (PLFS, ASUSE -flatten all groups)
+      - result["indicator"] = list           (NSS78)
+      - result["filter_values"]             (metadata responses)
+      - result["datasets"]                  (list_datasets)
+
+    The "data" key always takes priority; other keys are only used when "data" is absent.
+    """
+    data = result.get("data")
+
+    if data is not None:
+        # Most common: data is a plain list of records
+        if isinstance(data, list):
+            return data
+
+        if isinstance(data, dict):
+            # Nested: data.indicator or data.data
+            if "indicator" in data and isinstance(data["indicator"], list):
+                return data["indicator"]
+            if "data" in data and isinstance(data["data"], list):
+                return data["data"]
+            # Dict of lists (e.g. CPI get_indicators: {base_year:[..], level:[..], series:[..]})
+            rows = []
+            for key, values in data.items():
+                if isinstance(values, list):
+                    for v in values:
+                        if isinstance(v, dict):
+                            rows.append(v)
+                        else:
+                            rows.append({key: v})
+            if rows:
+                return rows
+
+        return []
+
+    # "data" key absent — fall through to dataset-specific shapes
+
+    # PLFS/ASUSE frequency-grouped indicators
+    if "indicators_by_frequency" in result:
+        rows = []
+        for group_name, items in result["indicators_by_frequency"].items():
+            if isinstance(items, list):
+                for item in items:
+                    row = dict(item) if isinstance(item, dict) else {"value": item}
+                    row["frequency_group"] = group_name
+                    rows.append(row)
+        return rows
+
+    # NSS78-style
+    if "indicator" in result and isinstance(result["indicator"], list):
+        return result["indicator"]
+
+    # filter_values (metadata responses)
+    fv = result.get("filter_values")
+    if isinstance(fv, dict):
+        return _extract_records(fv)
+
+    # list_datasets() shape
+    datasets = result.get("datasets")
+    if isinstance(datasets, dict):
+        rows = []
+        for dataset, info in datasets.items():
+            row = {"dataset": dataset}
+            if isinstance(info, dict):
+                row.update(info)
+            else:
+                row["value"] = info
+            rows.append(row)
+        if rows:
+            return rows
+
+    return []
+
+
+def to_dataframe(result: dict) -> Any:
+    """Convert API response to a pandas DataFrame.
+
+    Raises ImportError if pandas is not installed.
+    """
+    try:
+        import pandas as pd
+    except ImportError:
+        raise ImportError(
+            "pandas is required for DataFrame output. "
+            "Install it with: pip install pandas"
+        )
+
+    records = _extract_records(result)
+    if not records:
+        return pd.DataFrame()
+    return pd.DataFrame(records)
+
+
+def to_csv(result: dict) -> str:
+    """Convert API response to a CSV string."""
+    records = _extract_records(result)
+    if not records:
+        return ""
+
+    output = io.StringIO()
+    # Collect all keys across all records for the header
+    fieldnames = list(dict.fromkeys(k for row in records for k in row.keys()))
+    writer = csv_mod.DictWriter(output, fieldnames=fieldnames, extrasaction="ignore")
+    writer.writeheader()
+    writer.writerows(records)
+    return output.getvalue()
+
+
+def format_response(result: dict, fmt: str) -> Union[dict, Any, str]:
+    """Apply the requested output format to an API response.
+
+    Args:
+        result: Raw API response dict.
+        fmt: One of "dict", "df", "dataframe", "csv".
+
+    Returns:
+        dict, pandas.DataFrame, or CSV string.
+    """
+    fmt = fmt.lower().strip()
+
+    if isinstance(result, dict) and "error" in result:
+        raise APIError(
+            result["error"],
+            dataset=result.get("dataset"),
+            filters=result.get("filters"),
+            troubleshooting=result.get("troubleshooting"),
+            suggestion=result.get("suggestion"),
+            response=result,
+        )
+
+    records = _extract_records(result) if isinstance(result, dict) else []
+    if isinstance(result, dict) and (
+        (result.get("msg") == "No Data Found" and not records)
+        or (result.get("troubleshooting") and not records)
+    ):
+        message = result.get("msg")
+        if not message or message == "Data fetched successfully":
+            message = result.get("troubleshooting", "No data found for the requested query.")
+        raise NoDataError(
+            message,
+            dataset=result.get("dataset"),
+            filters=result.get("filters"),
+            troubleshooting=result.get("troubleshooting"),
+            suggestion=result.get("suggestion"),
+            response=result,
+        )
+
+    if fmt == "dict":
+        if isinstance(result, dict) and "data" in result:
+            return result["data"]
+        return result
+    elif fmt in ("df", "dataframe"):
+        return to_dataframe(result)
+    elif fmt == "csv":
+        return to_csv(result)
+    else:
+        raise ValueError(f"Unknown format: '{fmt}'. Use 'dict', 'df', or 'csv'.")
