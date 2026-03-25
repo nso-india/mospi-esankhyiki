@@ -421,6 +421,13 @@ python -m build
 
 ---
 
+## Related
+
+- [e-Sankhyiki MCP Server](https://github.com/nso-india/esankhyiki-mcp) - MCP server for accessing MoSPI data through AI assistants (Claude, ChatGPT, Cursor, etc.)
+- [MoSPI Open APIs](https://api.mospi.gov.in) - Official API documentation and e-Sankhyiki portal
+
+---
+
 ## Contributing
 
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
@@ -431,6 +438,6 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
-<p align="center">
-  <sub>Developed under the <strong>Bharat Digital Collaboration</strong> initiative - building open-source tools to make India's public data accessible to everyone.</sub>
-</p>
+## Acknowledgments
+
+Made in partnership with **[Bharat Digital](https://bharatdigital.io)** in pursuit of modernising and humanising how governments use technology in service of the public.
