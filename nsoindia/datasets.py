@@ -194,28 +194,18 @@ def transform_filters(filters: Dict[str, Any]) -> Dict[str, str]:
 # =========================================================================
 
 
-def _strip_viz(indicators: list) -> None:
-    """In-place: remove the 'viz' field from each indicator dict."""
-    for indicator in indicators:
-        indicator.pop("viz", None)
+def _strip_viz(obj: Any) -> None:
+    """Recursively remove the 'viz' field from all nested dicts/lists in-place."""
+    if isinstance(obj, dict):
+        obj.pop("viz", None)
+        for v in obj.values():
+            _strip_viz(v)
+    elif isinstance(obj, list):
+        for item in obj:
+            _strip_viz(item)
 
 
 def enrich_indicators(result: Dict[str, Any], dataset: str = None) -> Dict[str, Any]:
-    """Strip internal viz field from indicator lists."""
-    data = result.get("data")
-
-    if isinstance(data, list):
-        _strip_viz(data)
-    elif isinstance(data, dict) and "indicator" in data:
-        _strip_viz(data["indicator"])
-    elif isinstance(data, dict):
-        for v in data.values():
-            if isinstance(v, list):
-                _strip_viz(v)
-    elif "indicators_by_frequency" in result:
-        for items in result["indicators_by_frequency"].values():
-            _strip_viz(items)
-    elif "indicator" in result and isinstance(result["indicator"], list):
-        _strip_viz(result["indicator"])
-
+    """Strip internal viz field from indicator lists recursively."""
+    _strip_viz(result)
     return result
