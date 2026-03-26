@@ -43,6 +43,9 @@ dev = [
     "nbformat>=5.10.0",
 ]
 
+[project.scripts]
+nsoindia = "nsoindia.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/nso-india/mospidata"
 Repository = "https://github.com/nso-india/mospidata"
