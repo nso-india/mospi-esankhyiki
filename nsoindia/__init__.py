@@ -52,6 +52,9 @@ def _coerce_int_or_raise(value, param_name: str):
 
 def _check_empty_metadata(result, dataset, **params):
     """Raise NoDataError if upstream returned empty filter values."""
+    if "error" in result:
+        return result
+        
     data = result.get("filter_values", result.get("data", {}))
     if isinstance(data, dict):
         inner = data.get("data", data)
