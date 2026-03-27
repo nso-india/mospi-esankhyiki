@@ -40,15 +40,26 @@ def _extract_records(result: dict) -> list:
             if "data" in data and isinstance(data["data"], list):
                 return data["data"]
             # Dict of lists (e.g. CPI get_indicators: {base_year:[..], level:[..], series:[..]})
-            rows = []
+            lists_of_dicts = []
             for key, values in data.items():
-                if isinstance(values, list):
+                if isinstance(values, list) and values:
+                    normalized_values = []
                     for v in values:
                         if isinstance(v, dict):
-                            rows.append(v)
+                            normalized_values.append(v)
                         else:
-                            rows.append({key: v})
-            if rows:
+                            normalized_values.append({key: v})
+                    if normalized_values:
+                        lists_of_dicts.append(normalized_values)
+            
+            if lists_of_dicts:
+                import itertools
+                rows = []
+                for combo in itertools.product(*lists_of_dicts):
+                    row = {}
+                    for d_item in combo:
+                        row.update(d_item)
+                    rows.append(row)
                 return rows
 
         return []
@@ -77,6 +88,8 @@ def _extract_records(result: dict) -> list:
 
     # list_datasets() shape
     datasets = result.get("datasets")
+    if isinstance(datasets, list):
+        return [{"dataset": d} for d in datasets]
     if isinstance(datasets, dict):
         rows = []
         for dataset, info in datasets.items():
