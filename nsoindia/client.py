@@ -12,7 +12,9 @@ from bs4 import BeautifulSoup
 from typing import Optional, Dict, Any
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+import urllib3
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
 
