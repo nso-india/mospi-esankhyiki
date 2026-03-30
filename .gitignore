@@ -17,6 +17,8 @@ env/
 .pytest_cache/
 .coverage
 htmlcov/
+tests/test.ipynb
+build_notebook.py
 
 # IDE
 .vscode/
