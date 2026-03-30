@@ -37,6 +37,11 @@ def test_wpi_metadata():
     assert isinstance(result, (dict, list))
 
 
+def test_wpi_metadata():
+    result = nsoindia.get_metadata("WPI", base_year="2011-12")
+    assert isinstance(result, (dict, list))
+
+
 def test_ec_metadata():
     result = esankhyiki.get_metadata("EC", indicator_code=1)
     assert isinstance(result, (dict, list))

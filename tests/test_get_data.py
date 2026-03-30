@@ -38,7 +38,7 @@ def test_nas_data():
 
 
 def test_wpi_data():
-    result = esankhyiki.get_data("WPI", {
+    result = nsoindia.get_data("WPI", {
         "base_year": "2011-12",
         "year": "2023",
     })
