@@ -31,6 +31,7 @@ def test_api_errors_raise_for_dict_format(monkeypatch):
             {
                 "indicator_code": 1,
                 "frequency_code": 1,
+                "year_type_code": 1,
                 "year": "2023-24",
                 "state_code": 99,
                 "gender_code": 3,
@@ -59,6 +60,7 @@ def test_no_data_raises_for_dataframe_format(monkeypatch):
             {
                 "indicator_code": 1,
                 "frequency_code": 1,
+                "year_type_code": 1,
                 "year": "2023-24",
                 "state_code": 99,
                 "gender_code": 3,
