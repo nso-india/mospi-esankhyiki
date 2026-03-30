@@ -22,14 +22,14 @@ def test_cpi_indicators():
     assert isinstance(result, (dict, list))
 
 
-def test_iip_returns_guidance():
+def test_iip_indicators():
     result = nsoindia.get_indicators("IIP")
-    assert result.get("dataset") == "IIP"
+    assert isinstance(result, (dict, list))
 
 
-def test_wpi_returns_guidance():
+def test_wpi_indicators():
     result = nsoindia.get_indicators("WPI")
-    assert result.get("dataset") == "WPI"
+    assert isinstance(result, (dict, list))
 
 
 def test_nas_indicators():

@@ -137,8 +137,8 @@ def get_indicators(
         "TUS": _client.get_tus_indicators,
         "EC": _client.get_ec_indicators,
         "CPI": _client.get_cpi_base_years,
-        "IIP": lambda: {"dataset": "IIP"},
-        "WPI": lambda: {"dataset": "WPI"},
+        "IIP": _client.get_iip_indicators,
+        "WPI": _client.get_wpi_indicators,
         "ASI": _client.get_asi_indicators,
     }
 
@@ -239,7 +239,7 @@ def get_metadata(
             result = _check_empty_metadata(result, dataset, classification_year=classification_year)
 
         elif dataset == "WPI":
-            result = _client.get_wpi_filters()
+            result = _client.get_wpi_filters(base_year=base_year or "2011-12")
             result["api_params"] = get_swagger_param_definitions("WPI")
 
         elif dataset == "PLFS":
