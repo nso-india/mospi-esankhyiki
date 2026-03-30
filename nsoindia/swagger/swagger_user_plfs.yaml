@@ -39,6 +39,17 @@ paths:
         schema:
           type: string
           pattern: ^\d+$
+      - name: year_type_code
+        required: true
+        in: query
+        description: >
+          Year type classification. 1=Agriculture Year (financial year format, e.g. 2023-24),
+          2=Calendar Year (plain year format, e.g. 2023).
+          Use to filter data by year classification type.
+          Comma-separated for multiple values.
+        schema:
+          type: string
+          pattern: ^\d+(,\d+)*$
       - name: year
         in: query
         description: >
@@ -103,16 +114,6 @@ paths:
           For frequency_code=1 (Annual): only useful for indicator_codes 6, 7, 8 (wage indicators that have quarterly breakdowns). Indicators 1-3 show "quarter: all" and are unaffected.
           For frequency_code=2 (Quarterly bulletin): use to filter by specific quarter.
           Do NOT use for frequency_code=3 (Monthly) — use month_code instead.
-          Comma-separated for multiple values.
-        schema:
-          type: string
-          pattern: ^\d+(,\d+)*$
-      - name: year_type_code
-        in: query
-        description: >
-          Year type classification. 1=Agriculture Year (financial year format, e.g. 2023-24),
-          2=Calendar Year (plain year format, e.g. 2023).
-          Use to filter data by year classification type.
           Comma-separated for multiple values.
         schema:
           type: string
