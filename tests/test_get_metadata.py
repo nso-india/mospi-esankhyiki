@@ -18,10 +18,9 @@ def test_plfs_requires_indicator_code():
 
 
 def test_plfs_metadata():
-    result = nsoindia.get_metadata("PLFS", indicator_code=1, frequency_code=1)
+    result = nsoindia.get_metadata("PLFS", indicator_code=1, frequency_code=1, year_type_code=1)
     assert "filter_values" in result or "error" in result
     assert isinstance(result, (dict, list))
-
 
 def test_cpi_metadata():
     result = nsoindia.get_metadata("CPI", base_year="2024", level="Group", series="Current")

@@ -120,7 +120,7 @@ def get_swagger_params(dataset: str) -> list:
 _METADATA_PARAMS = frozenset({
     "indicator_code", "base_year", "level", "frequency",
     "classification_year", "frequency_code", "series",
-    "use_of_energy_balance_code", "sub_indicator_code",
+    "use_of_energy_balance_code", "sub_indicator_code", "year_type_code",
 })
 
 # Swagger param names that map to get_metadata param names

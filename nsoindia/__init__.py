@@ -162,6 +162,7 @@ def get_metadata(
     series=None,
     use_of_energy_balance_code=None,
     sub_indicator_code=None,
+    year_type_code=None,
     format: str = "dict",
 ):
     """
@@ -205,6 +206,7 @@ def get_metadata(
         "series": series,
         "use_of_energy_balance_code": use_of_energy_balance_code,
         "sub_indicator_code": sub_indicator_code,
+        "year_type_code": year_type_code,
     }
     _required = get_required_metadata_params(dataset)
     _missing = [p for p in _required if _param_values.get(p) is None]
