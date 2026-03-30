@@ -15,7 +15,7 @@ def rate_limit_mospi_api():
     original_post = nsoindia._client.session.post
     
     last_request_time = [0.0]
-    min_delay = 15.0
+    min_delay = 5.0
     
     def rate_limited(original_method):
         @wraps(original_method)
