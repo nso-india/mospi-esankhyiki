@@ -23,13 +23,13 @@ def test_cpi_indicators():
 
 
 def test_iip_indicators():
-    result = esankhyiki.get_indicators("IIP")
+    result = nsoindia.get_indicators("IIP")
     assert isinstance(result, (dict, list))
 
 
-# def test_wpi_indicators():
-#     result = esankhyiki.get_indicators("WPI")
-#     assert isinstance(result, (dict, list))
+def test_wpi_indicators():
+    result = nsoindia.get_indicators("WPI")
+    assert isinstance(result, (dict, list))
 
 
 def test_nas_indicators():
