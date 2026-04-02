@@ -24,7 +24,7 @@ from .datasets import (
 from .exceptions import MospiError, InvalidDatasetError, InvalidFilterError, APIError, NoDataError
 from .formatters import format_response
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __all__ = ["list_datasets", "get_indicators", "get_metadata", "get_data"]
 
 # Module-level client instance

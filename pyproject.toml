@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mospi-esankhyiki"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python client for India's National Statistical Office (NSO/MoSPI) data portal"
 readme = "README.md"
 license = "MIT"
@@ -44,9 +44,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/nso-india/mospidata"
-Repository = "https://github.com/nso-india/mospidata"
-Issues = "https://github.com/nso-india/mospidata/issues"
+Homepage = "https://github.com/nso-india/mospi-esankhyiki"
+Repository = "https://github.com/nso-india/mospi-esankhyiki"
+Issues = "https://github.com/nso-india/mospi-esankhyiki/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["esankhyiki"]

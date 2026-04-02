@@ -7,8 +7,8 @@ Thank you for your interest in contributing! This project aims to make India's p
 1. **Fork and clone** the repository:
 
    ```bash
-   git clone https://github.com/nso-india/mospidata.git
-   cd mospidata
+   git clone https://github.com/nso-india/mospi-esankhyiki.git
+   cd mospi-esankhyiki
    ```
 
 2. **Create a virtual environment** and install dev dependencies:

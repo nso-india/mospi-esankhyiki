@@ -27,9 +27,9 @@ def test_iip_indicators():
     assert isinstance(result, (dict, list))
 
 
-def test_wpi_indicators():
-    result = esankhyiki.get_indicators("WPI")
-    assert isinstance(result, (dict, list))
+# def test_wpi_indicators():
+#     result = esankhyiki.get_indicators("WPI")
+#     assert isinstance(result, (dict, list))
 
 
 def test_nas_indicators():

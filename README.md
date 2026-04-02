@@ -7,7 +7,7 @@
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.9%2B-blue.svg" alt="Python 3.9+"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a>
   <a href="https://pypi.org/project/mospi-esankhyiki/"><img src="https://img.shields.io/badge/pypi-v0.1.0-orange.svg" alt="PyPI"></a>
-  <a href="https://github.com/nso-india/mospidata"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
+  <a href="https://github.com/nso-india/mospi-esankhyiki"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
 </p>
 
 ---

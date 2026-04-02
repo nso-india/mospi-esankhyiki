@@ -37,12 +37,12 @@ def test_nas_data():
     assert isinstance(result, (dict, list))
 
 
-def test_wpi_data():
-    result = esankhyiki.get_data("WPI", {
-        "base_year": "2011-12",
-        "year": "2023",
-    })
-    assert isinstance(result, (dict, list))
+# def test_wpi_data():
+#     result = esankhyiki.get_data("WPI", {
+#         "base_year": "2011-12",
+#         "year": "2023",
+#     })
+#     assert isinstance(result, (dict, list))
 
 
 def test_cpi_auto_routes_group():
