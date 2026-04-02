@@ -1,40 +1,40 @@
-"""Tests for nsoindia.get_indicators() -requires network access."""
+"""Tests for esankhyiki.get_indicators() -requires network access."""
 
 import pytest
-import nsoindia
-from nsoindia.exceptions import APIError, InvalidDatasetError, NoDataError
+import esankhyiki
+from esankhyiki.exceptions import APIError, InvalidDatasetError, NoDataError
 
 pytestmark = pytest.mark.network
 
 
 def test_invalid_dataset_raises():
     with pytest.raises(InvalidDatasetError):
-        nsoindia.get_indicators("FAKE")
+        esankhyiki.get_indicators("FAKE")
 
 
 def test_plfs_indicators():
-    result = nsoindia.get_indicators("PLFS")
+    result = esankhyiki.get_indicators("PLFS")
     assert "indicators_by_frequency" in result or "error" in result
 
 
 def test_cpi_indicators():
-    result = nsoindia.get_indicators("CPI")
+    result = esankhyiki.get_indicators("CPI")
     assert isinstance(result, (dict, list))
 
 
 def test_iip_indicators():
-    result = nsoindia.get_indicators("IIP")
+    result = esankhyiki.get_indicators("IIP")
     assert isinstance(result, (dict, list))
 
 
 def test_wpi_indicators():
-    result = nsoindia.get_indicators("WPI")
+    result = esankhyiki.get_indicators("WPI")
     assert isinstance(result, (dict, list))
 
 
 def test_nas_indicators():
     try:
-        result = nsoindia.get_indicators("NAS")
+        result = esankhyiki.get_indicators("NAS")
     except (NoDataError, APIError) as exc:
         assert str(exc)
     else:
@@ -42,7 +42,7 @@ def test_nas_indicators():
 
 
 def test_ec_indicators():
-    result = nsoindia.get_indicators("EC")
+    result = esankhyiki.get_indicators("EC")
     assert isinstance(result, (dict, list))
 
 
@@ -52,7 +52,7 @@ def test_ec_indicators():
 ])
 def test_simple_indicators(dataset):
     try:
-        result = nsoindia.get_indicators(dataset)
+        result = esankhyiki.get_indicators(dataset)
     except (NoDataError, APIError) as exc:
         assert str(exc)
     else:

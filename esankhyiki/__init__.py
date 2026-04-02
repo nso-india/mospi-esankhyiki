@@ -1,11 +1,11 @@
 """
-nsoindia -Python client for India's Ministry of Statistics (MoSPI) data portal.
+esankhyiki -Python client for India's Ministry of Statistics (MoSPI) data portal.
 
 4-step workflow:
-    1. nsoindia.list_datasets()           -discover available datasets
-    2. nsoindia.get_indicators(dataset)   -list indicators for a dataset
-    3. nsoindia.get_metadata(dataset, ..) -get valid filter values
-    4. nsoindia.get_data(dataset, filters)— fetch statistical data
+    1. esankhyiki.list_datasets()           -discover available datasets
+    2. esankhyiki.get_indicators(dataset)   -list indicators for a dataset
+    3. esankhyiki.get_metadata(dataset, ..) -get valid filter values
+    4. esankhyiki.get_data(dataset, filters) -fetch statistical data
 """
 
 from typing import Dict, Any

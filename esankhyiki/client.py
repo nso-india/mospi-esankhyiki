@@ -245,7 +245,13 @@ class MoSPI:
     def get_wpi_filters(self, base_year: str = "2011-12") -> Dict[str, Any]:
         params = {"base_year": base_year, "Format": "JSON"}
         try:
-            response = self.session.get(f"{self.base_url}/api/wpi/getWpiData", params=params, timeout=30)
+            response = requests.get(
+                f"{self.base_url}/api/wpi/getWpiData",
+                params=params,
+                headers={"User-Agent": "Mozilla/5.0"},
+                verify=False,
+                timeout=30,
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException as e:

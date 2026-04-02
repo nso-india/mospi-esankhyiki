@@ -1,16 +1,16 @@
-"""Tests for nsoindia.list_datasets()"""
+"""Tests for esankhyiki.list_datasets()"""
 
-import nsoindia
+import esankhyiki
 
 
 def test_list_datasets_returns_all():
-    result = nsoindia.list_datasets()
+    result = esankhyiki.list_datasets()
     assert "datasets" in result
     assert len(result["datasets"]) == 19
 
 
 def test_list_datasets_has_all_datasets():
-    result = nsoindia.list_datasets()
+    result = esankhyiki.list_datasets()
     datasets = result["datasets"]
     expected = [
         "PLFS", "CPI", "IIP", "ASI", "NAS", "WPI", "ENERGY",

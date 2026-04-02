@@ -1,12 +1,12 @@
 <p align="center">
-  <h1 align="center">nsoindia</h1>
+  <h1 align="center">esankhyiki</h1>
   <p align="center">Python client for India's National Statistical Office (NSO/MoSPI) data portal</p>
 </p>
 
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.9%2B-blue.svg" alt="Python 3.9+"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a>
-  <a href="https://pypi.org/project/nsoindia/"><img src="https://img.shields.io/badge/pypi-v0.1.0-orange.svg" alt="PyPI"></a>
+  <a href="https://pypi.org/project/mospi-esankhyiki/"><img src="https://img.shields.io/badge/pypi-v0.1.0-orange.svg" alt="PyPI"></a>
   <a href="https://github.com/nso-india/mospidata"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
 </p>
 
@@ -17,25 +17,25 @@ Access **500+ statistical indicators** across **19 datasets** covering employmen
 ## Installation
 
 ```bash
-pip install nsoindia
+pip install mospi-esankhyiki
 ```
 
 ## Quick Start
 
 ```python
-import nsoindia
+import esankhyiki
 
 # Step 1: Discover available datasets
-datasets = nsoindia.list_datasets()
+datasets = esankhyiki.list_datasets()
 
 # Step 2: Get indicators for a dataset
-indicators = nsoindia.get_indicators("PLFS")
+indicators = esankhyiki.get_indicators("PLFS")
 
 # Step 3: Get valid filter values for an indicator
-metadata = nsoindia.get_metadata("PLFS", indicator_code=1, frequency_code=1)
+metadata = esankhyiki.get_metadata("PLFS", indicator_code=1, frequency_code=1)
 
 # Step 4: Fetch the data
-data = nsoindia.get_data("PLFS", {
+data = esankhyiki.get_data("PLFS", {
     "indicator_code": 1,
     "frequency_code": 1,
     "year": "2023-24",
@@ -70,8 +70,8 @@ list_datasets()  ->  get_indicators()  ->  get_metadata()  ->  get_data()
 Returns an overview of all 19 MoSPI statistical datasets.
 
 ```python
-datasets = nsoindia.list_datasets()
-datasets_df = nsoindia.list_datasets(format="df")
+datasets = esankhyiki.list_datasets()
+datasets_df = esankhyiki.list_datasets(format="df")
 ```
 
 ---
@@ -81,7 +81,7 @@ datasets_df = nsoindia.list_datasets(format="df")
 Returns available indicators for a given dataset.
 
 ```python
-indicators = nsoindia.get_indicators("PLFS")
+indicators = esankhyiki.get_indicators("PLFS")
 ```
 
 **Notes by dataset:**
@@ -98,7 +98,7 @@ Returns valid filter values (states, years, quarters, gender codes, etc.) for a 
 **Full signature:**
 
 ```python
-nsoindia.get_metadata(
+esankhyiki.get_metadata(
     dataset,
     indicator_code=None,        # int - required for most datasets
     base_year=None,             # str - required for CPI, IIP, NAS
@@ -144,7 +144,7 @@ nsoindia.get_metadata(
 Fetches statistical data. Use filter values returned by `get_metadata()`.
 
 ```python
-data = nsoindia.get_data("PLFS", {
+data = esankhyiki.get_data("PLFS", {
     "indicator_code": 1,
     "frequency_code": 1,
     "year": "2023-24",
@@ -158,7 +158,7 @@ data = nsoindia.get_data("PLFS", {
 **Pagination** (where supported):
 
 ```python
-data = nsoindia.get_data("PLFS", {
+data = esankhyiki.get_data("PLFS", {
     ...,
     "limit": 50,
     "page": 2,
@@ -179,13 +179,13 @@ All four functions accept a `format` parameter:
 
 ```python
 # Default dict
-data = nsoindia.get_data("PLFS", filters)
+data = esankhyiki.get_data("PLFS", filters)
 
 # DataFrame
-df = nsoindia.get_data("PLFS", filters, format="df")
+df = esankhyiki.get_data("PLFS", filters, format="df")
 
 # CSV
-csv = nsoindia.get_data("PLFS", filters, format="csv")
+csv = esankhyiki.get_data("PLFS", filters, format="csv")
 ```
 
 ---
@@ -221,12 +221,12 @@ csv = nsoindia.get_data("PLFS", filters, format="csv")
 ### Unemployment Rate (PLFS)
 
 ```python
-import nsoindia
+import esankhyiki
 
 # Discover valid filter values first
-meta = nsoindia.get_metadata("PLFS", indicator_code=3, frequency_code=1)
+meta = esankhyiki.get_metadata("PLFS", indicator_code=3, frequency_code=1)
 
-df = nsoindia.get_data("PLFS", {
+df = esankhyiki.get_data("PLFS", {
     "indicator_code": 3,      # Unemployment Rate
     "frequency_code": 1,      # Annual
     "year": "2023-24",
@@ -240,7 +240,7 @@ df = nsoindia.get_data("PLFS", {
 ### GDP / National Accounts (NAS)
 
 ```python
-meta = nsoindia.get_metadata(
+meta = esankhyiki.get_metadata(
     "NAS",
     indicator_code=1,
     base_year="2022-23",
@@ -248,7 +248,7 @@ meta = nsoindia.get_metadata(
     series="Current",
 )
 
-df = nsoindia.get_data("NAS", {
+df = esankhyiki.get_data("NAS", {
     "indicator_code": 1,
     "base_year": "2022-23",
     "series": "Current",
@@ -260,9 +260,9 @@ df = nsoindia.get_data("NAS", {
 
 ```python
 # CPI is auto-routed: pass level="Group" for group-level, level="Item" for item-level
-meta = nsoindia.get_metadata("CPI", base_year="2024", level="Group", series="Current")
+meta = esankhyiki.get_metadata("CPI", base_year="2024", level="Group", series="Current")
 
-df = nsoindia.get_data("CPI", {
+df = esankhyiki.get_data("CPI", {
     "base_year": "2024",
     "year": "2026",
     "series": "Current",
@@ -273,9 +273,9 @@ df = nsoindia.get_data("CPI", {
 
 ```python
 # IIP is auto-routed: annual if no month_code, monthly if month_code is present
-meta = nsoindia.get_metadata("IIP", base_year="2011-12", frequency="Annually")
+meta = esankhyiki.get_metadata("IIP", base_year="2011-12", frequency="Annually")
 
-df = nsoindia.get_data("IIP", {
+df = esankhyiki.get_data("IIP", {
     "base_year": "2011-12",
     "financial_year": "2023-24",
 }, format="df")
@@ -285,9 +285,9 @@ df = nsoindia.get_data("IIP", {
 
 ```python
 # WPI requires no indicator_code
-meta = nsoindia.get_metadata("WPI")
+meta = esankhyiki.get_metadata("WPI")
 
-df = nsoindia.get_data("WPI", {
+df = esankhyiki.get_data("WPI", {
     "base_year": "2011-12",
     "year": "2023-24",
     "series": "All Commodities",
@@ -297,9 +297,9 @@ df = nsoindia.get_data("WPI", {
 ### Annual Survey of Industries (ASI)
 
 ```python
-meta = nsoindia.get_metadata("ASI", classification_year="2008")
+meta = esankhyiki.get_metadata("ASI", classification_year="2008")
 
-df = nsoindia.get_data("ASI", {
+df = esankhyiki.get_data("ASI", {
     "classification_year": "2008",
     "indicator_code": 1,
     "year": "2021-22",
@@ -312,10 +312,10 @@ The EC dataset has two modes: **ranking** (top/bottom N districts) and **detail*
 
 ```python
 # Check available filters
-meta = nsoindia.get_metadata("EC", indicator_code=1)  # EC6 (2013-14)
+meta = esankhyiki.get_metadata("EC", indicator_code=1)  # EC6 (2013-14)
 
 # Ranking mode - top 5 districts in Assam by establishments
-data = nsoindia.get_data("EC", {
+data = esankhyiki.get_data("EC", {
     "indicator_code": 1,      # EC6
     "state": "18",            # Assam
     "mode": "ranking",
@@ -323,7 +323,7 @@ data = nsoindia.get_data("EC", {
 })
 
 # Detail mode - paginated row-level data (20 rows per page)
-data = nsoindia.get_data("EC", {
+data = esankhyiki.get_data("EC", {
     "indicator_code": 1,
     "state": "18",
     "mode": "detail",
@@ -334,10 +334,10 @@ data = nsoindia.get_data("EC", {
 ### Gender Statistics
 
 ```python
-indicators = nsoindia.get_indicators("GENDER")
-meta = nsoindia.get_metadata("GENDER", indicator_code=1)
+indicators = esankhyiki.get_indicators("GENDER")
+meta = esankhyiki.get_metadata("GENDER", indicator_code=1)
 
-df = nsoindia.get_data("GENDER", {
+df = esankhyiki.get_data("GENDER", {
     "indicator_code": 1,
     "year": "2021",
 }, format="df")
@@ -347,9 +347,9 @@ df = nsoindia.get_data("GENDER", {
 
 ```python
 # RBI uses sub_indicator_code internally; pass indicator_code and it maps automatically
-meta = nsoindia.get_metadata("RBI", indicator_code=1)
+meta = esankhyiki.get_metadata("RBI", indicator_code=1)
 
-df = nsoindia.get_data("RBI", {
+df = esankhyiki.get_data("RBI", {
     "indicator_code": 1,
     "year": "2023-24",
 }, format="df")
@@ -360,7 +360,7 @@ df = nsoindia.get_data("RBI", {
 ## Error Handling
 
 ```python
-from nsoindia.exceptions import (
+from esankhyiki.exceptions import (
     InvalidDatasetError,
     InvalidFilterError,
     APIError,
@@ -368,7 +368,7 @@ from nsoindia.exceptions import (
 )
 
 try:
-    data = nsoindia.get_data("PLFS", {
+    data = esankhyiki.get_data("PLFS", {
         "bogus_param": 1,
         "indicator_code": 1,
         "frequency_code": 1,

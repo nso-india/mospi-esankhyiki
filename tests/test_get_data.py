@@ -1,20 +1,20 @@
-"""Tests for nsoindia.get_data() -requires network access."""
+"""Tests for esankhyiki.get_data() -requires network access."""
 
 import pandas as pd
 import pytest
-import nsoindia
-from nsoindia.exceptions import InvalidDatasetError, InvalidFilterError
+import esankhyiki
+from esankhyiki.exceptions import InvalidDatasetError, InvalidFilterError
 
 pytestmark = pytest.mark.network
 
 
 def test_invalid_dataset_raises():
     with pytest.raises(InvalidDatasetError):
-        nsoindia.get_data("FAKE", {})
+        esankhyiki.get_data("FAKE", {})
 
 
 def test_plfs_data():
-    result = nsoindia.get_data("PLFS", {
+    result = esankhyiki.get_data("PLFS", {
         "indicator_code": 1,
         "frequency_code": 1,
         "year_type_code": 1,
@@ -28,7 +28,7 @@ def test_plfs_data():
 
 
 def test_nas_data():
-    result = nsoindia.get_data("NAS", {
+    result = esankhyiki.get_data("NAS", {
         "indicator_code": 1,
         "base_year": "2022-23",
         "series": "Current",
@@ -38,7 +38,7 @@ def test_nas_data():
 
 
 def test_wpi_data():
-    result = nsoindia.get_data("WPI", {
+    result = esankhyiki.get_data("WPI", {
         "base_year": "2011-12",
         "year": "2023",
     })
@@ -46,7 +46,7 @@ def test_wpi_data():
 
 
 def test_cpi_auto_routes_group():
-    result = nsoindia.get_data("CPI", {
+    result = esankhyiki.get_data("CPI", {
         "base_year": "2024",
         "year": "2026",
         "series": "Current",
@@ -56,11 +56,11 @@ def test_cpi_auto_routes_group():
 
 def test_invalid_filter_raises():
     with pytest.raises(InvalidFilterError):
-        nsoindia.get_data("PLFS", {"bogus_param": "123", "indicator_code": 1, "frequency_code": 1, "year_type_code": 1})
+        esankhyiki.get_data("PLFS", {"bogus_param": "123", "indicator_code": 1, "frequency_code": 1, "year_type_code": 1})
 
 
 def test_asi_data_with_required_filters():
-    result = nsoindia.get_data("ASI", {
+    result = esankhyiki.get_data("ASI", {
         "classification_year": "2008",
         "indicator_code": 1,
         "year": "2022-23",
@@ -71,7 +71,7 @@ def test_asi_data_with_required_filters():
 
 
 def test_ec_df_format_returns_dataframe():
-    result = nsoindia.get_data("EC", {
+    result = esankhyiki.get_data("EC", {
         "indicator_code": 1,
         "state": "27",
         "mode": "detail",
