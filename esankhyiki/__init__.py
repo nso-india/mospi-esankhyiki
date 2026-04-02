@@ -1,11 +1,11 @@
 """
-nsoindia -Python client for India's Ministry of Statistics (MoSPI) data portal.
+esankhyiki -Python client for India's Ministry of Statistics (MoSPI) data portal.
 
 4-step workflow:
-    1. nsoindia.list_datasets()           -discover available datasets
-    2. nsoindia.get_indicators(dataset)   -list indicators for a dataset
-    3. nsoindia.get_metadata(dataset, ..) -get valid filter values
-    4. nsoindia.get_data(dataset, filters)— fetch statistical data
+    1. esankhyiki.list_datasets()           -discover available datasets
+    2. esankhyiki.get_indicators(dataset)   -list indicators for a dataset
+    3. esankhyiki.get_metadata(dataset, ..) -get valid filter values
+    4. esankhyiki.get_data(dataset, filters) -fetch statistical data
 """
 
 from typing import Dict, Any
@@ -137,8 +137,8 @@ def get_indicators(
         "TUS": _client.get_tus_indicators,
         "EC": _client.get_ec_indicators,
         "CPI": _client.get_cpi_base_years,
-        "IIP": lambda: {"dataset": "IIP"},
-        "WPI": lambda: {"dataset": "WPI"},
+        "IIP": _client.get_iip_indicators,
+        "WPI": _client.get_wpi_indicators,
         "ASI": _client.get_asi_indicators,
     }
 
@@ -239,7 +239,7 @@ def get_metadata(
             result = _check_empty_metadata(result, dataset, classification_year=classification_year)
 
         elif dataset == "WPI":
-            result = _client.get_wpi_filters()
+            result = _client.get_wpi_filters(base_year=base_year or "2011-12")
             result["api_params"] = get_swagger_param_definitions("WPI")
 
         elif dataset == "PLFS":

@@ -1,4 +1,4 @@
-# Contributing to nsoindia
+# Contributing to esankhyiki
 
 Thank you for your interest in contributing! This project aims to make India's public statistical data accessible to every developer and researcher.
 
@@ -48,7 +48,7 @@ Thank you for your interest in contributing! This project aims to make India's p
 ## Project Structure
 
 ```
-nsoindia/
+esankhyiki/
 ├── __init__.py          # Public API (list_datasets, get_indicators, get_metadata, get_data)
 ├── client.py            # HTTP client for all 19 MoSPI dataset APIs
 ├── datasets.py          # Dataset registry, swagger validation, enrichment
@@ -70,10 +70,10 @@ nsoindia/
 
 1. Add the API endpoint to `MoSPI.api_endpoints` in `client.py`.
 2. Add `get_{dataset}_indicators()` and `get_{dataset}_filters()` methods to `client.py`.
-3. Add the swagger YAML spec to `nsoindia/swagger/`.
+3. Add the swagger YAML spec to `esankhyiki/swagger/`.
 4. Add the dataset to `VALID_DATASETS`, `DATASET_SWAGGER`, and `DATASET_DESCRIPTIONS` in `datasets.py`.
 5. Add routing in `get_indicators()`, `get_metadata()`, and `get_data()` in `__init__.py`.
-6. Add a definitions JSON to `nsoindia/definitions/` if indicator descriptions are available.
+6. Add a definitions JSON to `esankhyiki/definitions/` if indicator descriptions are available.
 7. Add tests.
 
 ## Code Style

@@ -150,6 +150,14 @@ class MoSPI:
     # IIP
     # =========================================================================
 
+    def get_iip_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(f"{self.base_url}/api/iip/getIipBaseYear", timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
     def get_iip_filters(self, base_year: str = "2011-12", frequency: str = "Annually") -> Dict[str, Any]:
         params = {"base_year": base_year, "frequency": frequency}
         try:
@@ -226,9 +234,24 @@ class MoSPI:
     # WPI
     # =========================================================================
 
-    def get_wpi_filters(self) -> Dict[str, Any]:
+    def get_wpi_indicators(self) -> Dict[str, Any]:
         try:
-            response = self.session.get(f"{self.base_url}/api/wpi/getWpiData", timeout=30)
+            response = self.session.get(f"{self.base_url}/api/wpi/getWpiBaseYear", timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_wpi_filters(self, base_year: str = "2011-12") -> Dict[str, Any]:
+        params = {"base_year": base_year, "Format": "JSON"}
+        try:
+            response = requests.get(
+                f"{self.base_url}/api/wpi/getWpiData",
+                params=params,
+                headers={"User-Agent": "Mozilla/5.0"},
+                verify=False,
+                timeout=30,
+            )
             response.raise_for_status()
             return response.json()
         except requests.RequestException as e:

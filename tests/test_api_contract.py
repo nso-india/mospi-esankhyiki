@@ -1,32 +1,32 @@
 import pytest
 
-import nsoindia
-from nsoindia.exceptions import APIError, InvalidDatasetError, InvalidFilterError, NoDataError
+import esankhyiki
+from esankhyiki.exceptions import APIError, InvalidDatasetError, InvalidFilterError, NoDataError
 
 
 def test_get_indicators_invalid_dataset_raises():
     with pytest.raises(InvalidDatasetError):
-        nsoindia.get_indicators("INVALID_DATASET")
+        esankhyiki.get_indicators("INVALID_DATASET")
 
 
 def test_get_metadata_missing_required_indicator_raises():
     with pytest.raises(InvalidFilterError):
-        nsoindia.get_metadata("PLFS")
+        esankhyiki.get_metadata("PLFS")
 
 
 def test_get_metadata_invalid_integer_filter_raises():
     with pytest.raises(InvalidFilterError):
-        nsoindia.get_metadata("PLFS", indicator_code="bad")
+        esankhyiki.get_metadata("PLFS", indicator_code="bad")
 
 
 def test_api_errors_raise_for_dict_format(monkeypatch):
     def fake_get_data(dataset_name, params):
         return {"error": "upstream failed", "troubleshooting": "bad gateway"}
 
-    monkeypatch.setattr(nsoindia, "_client", type("StubClient", (), {"get_data": staticmethod(fake_get_data)})())
+    monkeypatch.setattr(esankhyiki, "_client", type("StubClient", (), {"get_data": staticmethod(fake_get_data)})())
 
     with pytest.raises(APIError, match="upstream failed"):
-        nsoindia.get_data(
+        esankhyiki.get_data(
             "PLFS",
             {
                 "indicator_code": 1,
@@ -52,10 +52,10 @@ def test_no_data_raises_for_dataframe_format(monkeypatch):
             "suggestion": "Try broader filters.",
         }
 
-    monkeypatch.setattr(nsoindia, "_client", type("StubClient", (), {"get_data": staticmethod(fake_get_data)})())
+    monkeypatch.setattr(esankhyiki, "_client", type("StubClient", (), {"get_data": staticmethod(fake_get_data)})())
 
     with pytest.raises(NoDataError, match="No Data Found"):
-        nsoindia.get_data(
+        esankhyiki.get_data(
             "PLFS",
             {
                 "indicator_code": 1,
