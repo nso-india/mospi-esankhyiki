@@ -38,7 +38,7 @@ def test_nas_data():
 
 
 def test_wpi_data():
-    result = nsoindia.get_data("WPI", {
+    result = esankhyiki.get_data("WPI", {
         "base_year": "2011-12",
         "year": "2023",
     })
@@ -56,7 +56,7 @@ def test_cpi_auto_routes_group():
 
 def test_invalid_filter_raises():
     with pytest.raises(InvalidFilterError):
-        nsoindia.get_data("PLFS", {"bogus_param": "123", "indicator_code": 1, "frequency_code": 1, "year_type_code": 1})
+        esankhyiki.get_data("PLFS", {"bogus_param": "123", "indicator_code": 1, "frequency_code": 1, "year_type_code": 1})
 
 
 def test_asi_data_with_required_filters():
