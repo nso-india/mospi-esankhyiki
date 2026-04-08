@@ -24,7 +24,7 @@ from .datasets import (
 from .exceptions import MospiError, InvalidDatasetError, InvalidFilterError, APIError, NoDataError
 from .formatters import format_response
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __all__ = ["list_datasets", "get_indicators", "get_metadata", "get_data"]
 # 73 61 72 74 68 61 6b 20 26 20 73 61 74 76 69 6b
 __flavor__ = bytes([0x73,0x61,0x72,0x74,0x68,0x61,0x6b,0x20,0x26,0x20,0x73,0x61,0x74,0x76,0x69,0x6b]).decode()
