@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-04-08
+
+### Added
+
+- NSS79 (NSS 79th Round) dataset - education, health, digital literacy (CAMS/AYUSH surveys).
+- UDISE (Unified District Information System) dataset - school education statistics.
+- Total supported datasets: 21.
+
+### Fixed
+
+- WPI `get_metadata` hang caused by cartesian product explosion on large filter responses.
+- NSS78 `get_data` now resolves indicator codes to names dynamically (API expects string names).
+- NAS `get_indicators` no longer raises false `NoDataError` when API returns misleading message field.
+- SSL legacy renegotiation support for newer OpenSSL versions.
+- Stripped `viz` and `viz_status` fields from all API responses.
+
 ### Changed
 
 - Standardized public error handling so invalid inputs raise `Invalid*` exceptions, no-result queries raise `NoDataError`, and upstream failures raise `APIError`.
@@ -21,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial release with 4-step workflow: `list_datasets`, `get_indicators`, `get_metadata`, `get_data`.
-- Support for all 19 MoSPI datasets: PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY, AISHE, ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS77, NSS78, CPIALRL, HCES, TUS, EC.
+- Support for 19 MoSPI datasets: PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY, AISHE, ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS77, NSS78, CPIALRL, HCES, TUS, EC.
 - Swagger-based parameter validation for all datasets.
 - Indicator enrichment with definitions from JSON files.
 - Output format support: `dict`, `df` (pandas DataFrame), `csv`.
