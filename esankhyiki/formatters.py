@@ -154,6 +154,17 @@ def to_csv(result: dict) -> str:
     return output.getvalue()
 
 
+def _strip_viz(obj):
+    """Recursively remove 'viz' keys from dicts in the response."""
+    if isinstance(obj, dict):
+        obj.pop("viz", None)
+        for v in obj.values():
+            _strip_viz(v)
+    elif isinstance(obj, list):
+        for item in obj:
+            _strip_viz(item)
+
+
 def format_response(result: dict, fmt: str) -> Union[dict, Any, str]:
     """Apply the requested output format to an API response.
 
@@ -164,6 +175,7 @@ def format_response(result: dict, fmt: str) -> Union[dict, Any, str]:
     Returns:
         dict, pandas.DataFrame, or CSV string.
     """
+    _strip_viz(result)
     fmt = fmt.lower().strip()
 
     if isinstance(result, dict) and "error" in result:
