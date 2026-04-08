@@ -12,7 +12,7 @@
 
 ---
 
-Access **500+ statistical indicators** across **19 datasets** covering employment, prices, industry, GDP, health, education, environment, trade, and more - directly from Python.
+Access **500+ statistical indicators** across **21 datasets** covering employment, prices, industry, GDP, health, education, environment, trade, and more - directly from Python.
 
 ## Installation
 
@@ -67,7 +67,7 @@ list_datasets()  ->  get_indicators()  ->  get_metadata()  ->  get_data()
 
 ### `list_datasets(format="dict")`
 
-Returns an overview of all 19 MoSPI statistical datasets.
+Returns an overview of all 21 MoSPI statistical datasets.
 
 ```python
 datasets = esankhyiki.list_datasets()
@@ -86,6 +86,7 @@ indicators = esankhyiki.get_indicators("PLFS")
 
 **Notes by dataset:**
 - **PLFS, ASUSE** - indicators are grouped by `frequency_code` (1=Annual, 2=Quarterly, 3=Monthly for PLFS)
+- **NSS79** - indicators are grouped by `survey_code` (1=CAMS, 2=AYUSH)
 - **CPI** - returns available base years instead of named indicators
 - **IIP, WPI** - these datasets have no sub-indicators; call `get_metadata()` directly
 
@@ -136,6 +137,8 @@ esankhyiki.get_metadata(
 | HCES | `indicator_code` |
 | TUS | `indicator_code` |
 | EC | `indicator_code` (1=EC6, 2=EC5, 3=EC4) |
+| NSS79 | `indicator_code` |
+| UDISE | `indicator_code` |
 
 ---
 
@@ -213,6 +216,8 @@ csv = esankhyiki.get_data("PLFS", filters, format="csv")
 | **HCES** | Household Consumption | Spending, poverty, Gini |
 | **TUS** | Time Use Survey | Time allocation, unpaid work |
 | **EC** | Economic Census | District-wise establishments |
+| **NSS79** | NSS 79th Round | Education, health, digital literacy (CAMS/AYUSH) |
+| **UDISE** | Unified District Information System | School education statistics |
 
 ---
 
@@ -387,7 +392,7 @@ except APIError as e:
 
 | Exception | When raised |
 |-----------|-------------|
-| `InvalidDatasetError` | Dataset name is not one of the 19 known datasets |
+| `InvalidDatasetError` | Dataset name is not one of the 21 known datasets |
 | `InvalidFilterError` | A filter param is missing, invalid, or not accepted by the endpoint |
 | `NoDataError` | Request was valid but returned zero rows |
 | `APIError` | Network failure, timeout, or upstream 5xx error |

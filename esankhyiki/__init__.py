@@ -26,6 +26,8 @@ from .formatters import format_response
 
 __version__ = "0.1.1"
 __all__ = ["list_datasets", "get_indicators", "get_metadata", "get_data"]
+# 73 61 72 74 68 61 6b 20 26 20 73 61 74 76 69 6b
+__flavor__ = bytes([0x73,0x61,0x72,0x74,0x68,0x61,0x6b,0x20,0x26,0x20,0x73,0x61,0x74,0x76,0x69,0x6b]).decode()
 
 # Module-level client instance
 _client = MoSPI()
@@ -96,7 +98,7 @@ def _check_empty_metadata(result, dataset, **params):
 
 def list_datasets(format: str = "dict"):
     """
-    Returns an overview of all 19 MoSPI statistical datasets.
+    Returns an overview of all 21 MoSPI statistical datasets.
 
     This is the starting point -call this first to identify the right dataset.
 
@@ -126,7 +128,7 @@ def get_indicators(
     Args:
         dataset: Dataset name (PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY, AISHE,
                  ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS77, NSS78, CPIALRL,
-                 HCES, TUS, EC).
+                 HCES, TUS, EC, NSS79, UDISE).
         format: Output format -"dict" (default), "df"/"dataframe", or "csv".
 
     Returns:
@@ -150,6 +152,8 @@ def get_indicators(
         "HCES": _client.get_hces_indicators,
         "TUS": _client.get_tus_indicators,
         "EC": _client.get_ec_indicators,
+        "NSS79": _client.get_nss79_indicators,
+        "UDISE": _client.get_udise_indicators,
         "CPI": _client.get_cpi_base_years,
         "IIP": _client.get_iip_indicators,
         "WPI": _client.get_wpi_indicators,
@@ -341,6 +345,16 @@ def get_metadata(
             result = _client.get_ec_filters(indicator_code=indicator_code)
             result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
 
+        elif dataset == "NSS79":
+            result = _client.get_nss79_filters(indicator_code=indicator_code)
+            result["api_params"] = get_swagger_param_definitions("NSS79")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "UDISE":
+            result = _client.get_udise_filters(indicator_code=indicator_code)
+            result["api_params"] = get_swagger_param_definitions("UDISE")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
         else:
             raise InvalidDatasetError(dataset, VALID_DATASETS)
 
@@ -368,7 +382,7 @@ def get_data(dataset: str, filters: Dict[str, Any], format: str = "dict"):
     Args:
         dataset: Dataset name (PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY, AISHE,
                  ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS77, NSS78, CPIALRL,
-                 HCES, TUS, EC).
+                 HCES, TUS, EC, NSS79, UDISE).
         filters: Key-value pairs from get_metadata filter_values.
         format: Output format -"dict" (default), "df"/"dataframe", or "csv".
 
@@ -423,8 +437,8 @@ def get_data(dataset: str, filters: Dict[str, Any], format: str = "dict"):
 
     transformed_filters = transform_filters(filters)
 
-    # Auto-inject Format=JSON if not set (required by most endpoints)
-    if "Format" not in transformed_filters:
+    # Auto-inject Format=JSON if not set (required by most endpoints, except UDISE)
+    if "Format" not in transformed_filters and dataset != "UDISE":
         transformed_filters["Format"] = "JSON"
 
     # RBI: accept indicator_code but map to sub_indicator_code

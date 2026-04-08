@@ -13,6 +13,7 @@ VALID_DATASETS = [
     "PLFS", "CPI", "IIP", "ASI", "NAS", "WPI", "ENERGY",
     "AISHE", "ASUSE", "GENDER", "NFHS", "ENVSTATS", "RBI",
     "NSS77", "NSS78", "CPIALRL", "HCES", "TUS", "EC",
+    "NSS79", "UDISE",
 ]
 
 DATASET_SWAGGER = {
@@ -39,6 +40,8 @@ DATASET_SWAGGER = {
     "HCES": ("swagger_user_hces.yaml", "/api/hces/getHcesRecords"),
     "TUS": ("swagger_user_tus.yaml", "/api/tus/getTusRecords"),
     "EC": ("swagger_user_ec.yaml", "/EC/filterDistrict6"),
+    "NSS79": ("swagger_user_nss79.yaml", "/api/nss-79/getNSS79Records"),
+    "UDISE": ("swagger_user_udise.yaml", "/api/udise/getUdiseRecords"),
 }
 
 # Dataset name -> API key mapping for get_data routing
@@ -63,6 +66,8 @@ DATASET_API_MAP = {
     "CPIALRL": "CPIALRL",
     "HCES": "HCES",
     "TUS": "TUS",
+    "NSS79": "NSS79",
+    "UDISE": "UDISE",
 }
 
 
@@ -214,6 +219,9 @@ def enrich_indicators(result: Dict[str, Any], dataset: str = None) -> Dict[str, 
                 _strip_viz(v)
     elif "indicators_by_frequency" in result:
         for items in result["indicators_by_frequency"].values():
+            _strip_viz(items)
+    elif "indicators_by_survey" in result:
+        for items in result["indicators_by_survey"].values():
             _strip_viz(items)
     elif "indicator" in result and isinstance(result["indicator"], list):
         _strip_viz(result["indicator"])
