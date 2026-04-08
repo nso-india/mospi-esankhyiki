@@ -53,14 +53,29 @@ def _extract_records(result: dict) -> list:
                         lists_of_dicts.append(normalized_values)
             
             if lists_of_dicts:
-                import itertools
-                rows = []
-                for combo in itertools.product(*lists_of_dicts):
-                    row = {}
-                    for d_item in combo:
-                        row.update(d_item)
-                    rows.append(row)
-                return rows
+                # Guard against cartesian explosion on large filter responses
+                # (e.g. WPI with 7 lists of 15-300 items each).
+                # Only compute product for small lists (< 10K combinations).
+                total = 1
+                for lst in lists_of_dicts:
+                    total *= max(len(lst), 1)
+                    if total > 10000:
+                        break
+                if total <= 10000:
+                    import itertools
+                    rows = []
+                    for combo in itertools.product(*lists_of_dicts):
+                        row = {}
+                        for d_item in combo:
+                            row.update(d_item)
+                        rows.append(row)
+                    return rows
+                else:
+                    # Too large for product - flatten each list separately
+                    rows = []
+                    for lst in lists_of_dicts:
+                        rows.extend(lst)
+                    return rows
 
         return []
 
@@ -139,6 +154,17 @@ def to_csv(result: dict) -> str:
     return output.getvalue()
 
 
+def _strip_viz(obj):
+    """Recursively remove 'viz' keys from dicts in the response."""
+    if isinstance(obj, dict):
+        obj.pop("viz", None)
+        for v in obj.values():
+            _strip_viz(v)
+    elif isinstance(obj, list):
+        for item in obj:
+            _strip_viz(item)
+
+
 def format_response(result: dict, fmt: str) -> Union[dict, Any, str]:
     """Apply the requested output format to an API response.
 
@@ -149,6 +175,7 @@ def format_response(result: dict, fmt: str) -> Union[dict, Any, str]:
     Returns:
         dict, pandas.DataFrame, or CSV string.
     """
+    _strip_viz(result)
     fmt = fmt.lower().strip()
 
     if isinstance(result, dict) and "error" in result:
@@ -161,22 +188,23 @@ def format_response(result: dict, fmt: str) -> Union[dict, Any, str]:
             response=result,
         )
 
-    records = _extract_records(result) if isinstance(result, dict) else []
-    if isinstance(result, dict) and (
-        (result.get("msg") == "No Data Found" and not records)
-        or (result.get("troubleshooting") and not records)
-    ):
-        message = result.get("msg")
-        if not message or message == "Data fetched successfully":
-            message = result.get("troubleshooting", "No data found for the requested query.")
-        raise NoDataError(
-            message,
-            dataset=result.get("dataset"),
-            filters=result.get("filters"),
-            troubleshooting=result.get("troubleshooting"),
-            suggestion=result.get("suggestion"),
-            response=result,
-        )
+    # Check for "No Data Found" without calling _extract_records (which can
+    # be expensive for large dict-of-lists responses like WPI filters).
+    if isinstance(result, dict):
+        msg = result.get("msg")
+        ts = result.get("troubleshooting")
+        if msg == "No Data Found" or (ts and not result.get("data")):
+            message = msg if msg and msg != "Data fetched successfully" else (
+                ts or "No data found for the requested query."
+            )
+            raise NoDataError(
+                message,
+                dataset=result.get("dataset"),
+                filters=result.get("filters"),
+                troubleshooting=ts,
+                suggestion=result.get("suggestion"),
+                response=result,
+            )
 
     if fmt == "dict":
         if isinstance(result, dict) and "data" in result:
