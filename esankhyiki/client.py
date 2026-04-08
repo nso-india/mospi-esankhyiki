@@ -6,6 +6,7 @@ Handles all HTTP calls to the MoSPI data portal.
 import math
 import random
 import os
+import ssl
 import yaml
 import requests
 from bs4 import BeautifulSoup
@@ -15,6 +16,23 @@ from urllib3.util.retry import Retry
 
 
 RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
+
+
+class _LegacySSLAdapter(HTTPAdapter):
+    """HTTPAdapter that enables legacy SSL renegotiation.
+
+    The MoSPI API server requires legacy SSL renegotiation which is
+    disabled by default in newer OpenSSL versions. This adapter creates
+    an SSL context with OP_LEGACY_SERVER_CONNECT enabled.
+    """
+
+    def init_poolmanager(self, *args, **kwargs):
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        ctx.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
+        kwargs["ssl_context"] = ctx
+        return super().init_poolmanager(*args, **kwargs)
 
 
 class MoSPI:
@@ -34,7 +52,7 @@ class MoSPI:
             allowed_methods=frozenset({"GET", "POST"}),
             respect_retry_after_header=True,
         )
-        adapter = HTTPAdapter(max_retries=retry)
+        adapter = _LegacySSLAdapter(max_retries=retry)
         self.session.verify = False
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
@@ -243,14 +261,12 @@ class MoSPI:
             return {"error": str(e), "statusCode": False}
 
     def get_wpi_filters(self, base_year: str = "2011-12") -> Dict[str, Any]:
-        params = {"base_year": base_year, "Format": "JSON"}
+        params = {"base_year": base_year}
         try:
-            response = requests.get(
+            response = self.session.get(
                 f"{self.base_url}/api/wpi/getWpiData",
                 params=params,
-                headers={"User-Agent": "Mozilla/5.0"},
-                verify=False,
-                timeout=30,
+                timeout=60,
             )
             response.raise_for_status()
             return response.json()

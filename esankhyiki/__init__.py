@@ -54,9 +54,23 @@ def _check_empty_metadata(result, dataset, **params):
     """Raise NoDataError if upstream returned empty filter values."""
     if "error" in result:
         return result
-        
-    data = result.get("filter_values", result.get("data", {}))
-    if isinstance(data, dict):
+
+    _NON_DATA_KEYS = frozenset({"api_params", "statusCode", "dataset", "_note"})
+
+    data = result.get("filter_values", result.get("data", None))
+
+    # If neither "filter_values" nor "data" exists, check the top-level result
+    # for list values (e.g. NSS78 returns {"sub_indicator": [...], "state": [...]})
+    if data is None:
+        top_level_lists = [
+            v for k, v in result.items()
+            if k not in _NON_DATA_KEYS and isinstance(v, list)
+        ]
+        if top_level_lists:
+            is_empty = all(len(v) == 0 for v in top_level_lists)
+        else:
+            is_empty = False
+    elif isinstance(data, dict):
         inner = data.get("data", data)
         if isinstance(inner, dict):
             values = [v for v in inner.values() if isinstance(v, list)]
@@ -388,10 +402,20 @@ def get_data(dataset: str, filters: Dict[str, Any], format: str = "dict"):
         filters = dict(filters)
         filters["type"] = "All"
 
-    # NSS78: map indicator_code to Indicator (API uses capital-I naming)
+    # NSS78: map indicator_code to Indicator name (API expects string name, not code)
     if dataset == "NSS78" and "indicator_code" in filters and "Indicator" not in filters:
         filters = dict(filters)
-        filters["Indicator"] = filters.pop("indicator_code")
+        code = filters.pop("indicator_code")
+        try:
+            code_int = int(code)
+            indicators = _client.get_nss78_indicators().get("indicator", [])
+            name_map = {i["code"]: i["name"] for i in indicators}
+            if code_int in name_map:
+                filters["Indicator"] = name_map[code_int]
+            else:
+                filters["Indicator"] = code
+        except (ValueError, TypeError):
+            filters["Indicator"] = code
 
     api_dataset = DATASET_API_MAP.get(dataset)
     if not api_dataset:
