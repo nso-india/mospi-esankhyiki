@@ -77,6 +77,8 @@ class MoSPI:
             "CPIALRL": "/api/cpialrl/getCpialrlRecords",
             "HCES": "/api/hces/getHcesRecords",
             "TUS": "/api/tus/getTusRecords",
+            "NSS79": "/api/nss-79/getNSS79Records",
+            "UDISE": "/api/udise/getUdiseRecords",
         }
 
     def get_data(self, dataset_name: str, params: Optional[Dict] = None) -> Dict[str, Any]:
@@ -556,6 +558,66 @@ class MoSPI:
         try:
             response = self.session.get(
                 f"{self.base_url}/api/tus/getTusFilterByIndicatorId", params=params, timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    # =========================================================================
+    # NSS79
+    # =========================================================================
+
+    def get_nss79_indicators(self) -> Dict[str, Any]:
+        try:
+            result = {}
+            for sc, label in [(1, "CAMS"), (2, "AYUSH")]:
+                response = self.session.get(
+                    f"{self.base_url}/api/nss-79/getNSS79IndicatorList",
+                    params={"survey_code": sc}, timeout=30,
+                )
+                response.raise_for_status()
+                data = response.json()
+                result[f"survey_code_{sc}_{label}"] = data.get("data", [])
+            return {
+                "indicators_by_survey": result,
+                "_note": (
+                    "survey_code=1 (CAMS): indicators 1-28 (education, health, digital literacy). "
+                    "survey_code=2 (AYUSH): indicators 29-35 (awareness, usage, treatment)."
+                ),
+                "statusCode": True,
+            }
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss79_filters(self, indicator_code: int) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-79/getNSS79FilterByIndicatorId", params=params, timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    # =========================================================================
+    # UDISE
+    # =========================================================================
+
+    def get_udise_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(f"{self.base_url}/api/udise/getIndicatorList", timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_udise_filters(self, indicator_code: int) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/udise/getUdiseFilterByIndicatorId", params=params, timeout=30,
             )
             response.raise_for_status()
             return response.json()

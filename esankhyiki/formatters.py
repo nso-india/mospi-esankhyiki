@@ -81,7 +81,17 @@ def _extract_records(result: dict) -> list:
 
     # "data" key absent — fall through to dataset-specific shapes
 
-    # PLFS/ASUSE frequency-grouped indicators
+    # PLFS/ASUSE frequency-grouped or NSS79 survey-grouped indicators
+    if "indicators_by_survey" in result:
+        rows = []
+        for group_name, items in result["indicators_by_survey"].items():
+            if isinstance(items, list):
+                for item in items:
+                    row = dict(item) if isinstance(item, dict) else {"value": item}
+                    row["survey_group"] = group_name
+                    rows.append(row)
+        return rows
+
     if "indicators_by_frequency" in result:
         rows = []
         for group_name, items in result["indicators_by_frequency"].items():
@@ -155,9 +165,10 @@ def to_csv(result: dict) -> str:
 
 
 def _strip_viz(obj):
-    """Recursively remove 'viz' keys from dicts in the response."""
+    """Recursively remove 'viz' and 'viz_status' keys from dicts in the response."""
     if isinstance(obj, dict):
         obj.pop("viz", None)
+        obj.pop("viz_status", None)
         for v in obj.values():
             _strip_viz(v)
     elif isinstance(obj, list):
@@ -193,7 +204,7 @@ def format_response(result: dict, fmt: str) -> Union[dict, Any, str]:
     if isinstance(result, dict):
         msg = result.get("msg")
         ts = result.get("troubleshooting")
-        if msg == "No Data Found" or (ts and not result.get("data")):
+        if (msg == "No Data Found" and not result.get("data")) or (ts and not result.get("data")):
             message = msg if msg and msg != "Data fetched successfully" else (
                 ts or "No data found for the requested query."
             )
