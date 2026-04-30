@@ -13,7 +13,7 @@ VALID_DATASETS = [
     "PLFS", "CPI", "IIP", "ASI", "NAS", "WPI", "ENERGY",
     "AISHE", "ASUSE", "GENDER", "NFHS", "ENVSTATS", "RBI",
     "NSS77", "NSS78", "CPIALRL", "HCES", "TUS", "EC",
-    "NSS79", "UDISE",
+    "NSS79", "UDISE", "MNRE",
 ]
 
 DATASET_SWAGGER = {
@@ -42,6 +42,7 @@ DATASET_SWAGGER = {
     "EC": ("swagger_user_ec.yaml", "/EC/filterDistrict6"),
     "NSS79": ("swagger_user_nss79.yaml", "/api/nss-79/getNSS79Records"),
     "UDISE": ("swagger_user_udise.yaml", "/api/udise/getUdiseRecords"),
+    "MNRE": ("swagger_user_mnre.yaml", "/api/mnre/getDataByEnergy"),
 }
 
 # Dataset name -> API key mapping for get_data routing
@@ -68,6 +69,7 @@ DATASET_API_MAP = {
     "TUS": "TUS",
     "NSS79": "NSS79",
     "UDISE": "UDISE",
+    "MNRE": "MNRE",
 }
 
 

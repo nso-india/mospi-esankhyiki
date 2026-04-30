@@ -47,12 +47,22 @@ def test_ec_indicators():
 
 
 @pytest.mark.parametrize("dataset", [
-    "ASI", "ENERGY", "AISHE", "ASUSE", "GENDER", "NFHS", 
+    "ASI", "ENERGY", "AISHE", "ASUSE", "GENDER", "NFHS",
     "ENVSTATS", "RBI", "NSS77", "NSS78", "CPIALRL", "HCES", "TUS"
 ])
 def test_simple_indicators(dataset):
     try:
         result = esankhyiki.get_indicators(dataset)
+    except (NoDataError, APIError) as exc:
+        assert str(exc)
+    else:
+        assert isinstance(result, (dict, list))
+        assert len(result) > 0
+
+
+def test_mnre_indicators():
+    try:
+        result = esankhyiki.get_indicators("MNRE")
     except (NoDataError, APIError) as exc:
         assert str(exc)
     else:

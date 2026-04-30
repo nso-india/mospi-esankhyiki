@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-04-30
+
+### Added
+
+- MNRE (Renewable Energy) dataset - state-wise monthly installed capacity for solar, wind, hydro, bio, and total renewable power in MW from the Ministry of New and Renewable Energy.
+- Total supported datasets: 22.
+
 ## [0.1.2] - 2026-04-08
 
 ### Added
