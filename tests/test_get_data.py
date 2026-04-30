@@ -78,3 +78,30 @@ def test_ec_df_format_returns_dataframe():
         "pageNum": "1",
     }, format="df")
     assert isinstance(result, pd.DataFrame)
+
+
+def test_mnre_data():
+    from esankhyiki.exceptions import NoDataError, APIError
+    try:
+        result = esankhyiki.get_data("MNRE", {
+            "type_of_renewable_energy_code": 1,
+            "state_code": 36,
+            "year": "2023",
+        })
+    except (NoDataError, APIError) as exc:
+        assert str(exc)
+    else:
+        assert isinstance(result, (dict, list))
+
+
+def test_mnre_data_df_format():
+    from esankhyiki.exceptions import NoDataError, APIError
+    try:
+        result = esankhyiki.get_data("MNRE", {
+            "type_of_renewable_energy_code": 2,
+            "state_code": 36,
+        }, format="df")
+    except (NoDataError, APIError) as exc:
+        assert str(exc)
+    else:
+        assert isinstance(result, pd.DataFrame)

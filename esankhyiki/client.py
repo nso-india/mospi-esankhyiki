@@ -79,6 +79,7 @@ class MoSPI:
             "TUS": "/api/tus/getTusRecords",
             "NSS79": "/api/nss-79/getNSS79Records",
             "UDISE": "/api/udise/getUdiseRecords",
+            "MNRE": "/api/mnre/getDataByEnergy",
         }
 
     def get_data(self, dataset_name: str, params: Optional[Dict] = None) -> Dict[str, Any]:
@@ -618,6 +619,31 @@ class MoSPI:
         try:
             response = self.session.get(
                 f"{self.base_url}/api/udise/getUdiseFilterByIndicatorId", params=params, timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    # =========================================================================
+    # MNRE
+    # =========================================================================
+
+    def get_mnre_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/mnre/getTypeOfRenewableEnergy", timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_mnre_filters(self, type_of_renewable_energy_code: int = None) -> Dict[str, Any]:
+        params = {"type_of_renewable_energy_code": type_of_renewable_energy_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/mnre/getFilterByEnergy", params=params, timeout=30
             )
             response.raise_for_status()
             return response.json()

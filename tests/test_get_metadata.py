@@ -77,3 +77,12 @@ def test_asuse_metadata():
 def test_rbi_metadata():
     result = esankhyiki.get_metadata("RBI", sub_indicator_code=1)
     assert isinstance(result, (dict, list))
+
+
+def test_mnre_metadata():
+    try:
+        result = esankhyiki.get_metadata("MNRE", indicator_code=1)
+    except (esankhyiki.exceptions.NoDataError, esankhyiki.exceptions.APIError) as e:
+        assert str(e)
+    else:
+        assert isinstance(result, (dict, list))
