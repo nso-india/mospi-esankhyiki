@@ -5,7 +5,9 @@ import esankhyiki
 CORE_DATASETS = [
     "PLFS", "CPI", "IIP", "ASI", "NAS", "WPI", "ENERGY",
     "AISHE", "ASUSE", "GENDER", "NFHS", "ENVSTATS", "RBI",
-    "NSS77", "NSS78", "CPIALRL", "HCES", "TUS", "EC", "MNRE",
+    "NSS73", "NSS75", "NSS75E", "NSS76", "NSS76C", "NSS77", "NSS78", "CPIALRL",
+    "HCES", "TUS", "EC", "NSS80","NSS80C", "MNRE",
+    "ISP",
 ]
 
 OPTIONAL_DATASETS = [

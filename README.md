@@ -6,13 +6,13 @@
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.9%2B-blue.svg" alt="Python 3.9+"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License: MIT"></a>
-  <a href="https://pypi.org/project/mospi-esankhyiki/"><img src="https://img.shields.io/badge/pypi-v0.1.3-orange.svg" alt="PyPI"></a>
+  <a href="https://pypi.org/project/mospi-esankhyiki/"><img src="https://img.shields.io/badge/pypi-v0.1.4-orange.svg" alt="PyPI"></a>
   <a href="https://github.com/nso-india/mospi-esankhyiki"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
 </p>
 
 ---
 
-Access **500+ statistical indicators** across **22 datasets** covering employment, prices, industry, GDP, health, education, environment, trade, and more - directly from Python.
+Access **500+ statistical indicators** across **30 datasets** covering employment, prices, industry, GDP, health, education, environment, trade, and more - directly from Python.
 
 ## Installation
 
@@ -67,7 +67,7 @@ list_datasets()  ->  get_indicators()  ->  get_metadata()  ->  get_data()
 
 ### `list_datasets(format="dict")`
 
-Returns an overview of all 22 MoSPI statistical datasets.
+Returns an overview of all 30 MoSPI statistical datasets.
 
 ```python
 datasets = esankhyiki.list_datasets()
@@ -87,6 +87,8 @@ indicators = esankhyiki.get_indicators("PLFS")
 **Notes by dataset:**
 - **PLFS, ASUSE** - indicators are grouped by `frequency_code` (1=Annual, 2=Quarterly, 3=Monthly for PLFS)
 - **NSS79** - indicators are grouped by `survey_code` (1=CAMS, 2=AYUSH)
+- **NSS75, NSS75E, NSS76, NSS76C, NSS80, NSS80C** - indicators are grouped by `survey_code`.
+- **ISP** - returns static frequencies (Yearly/Monthly) instead of named indicators.
 - **CPI** - returns available base years instead of named indicators
 - **IIP, WPI** - these datasets have no sub-indicators; call `get_metadata()` directly
 
@@ -121,6 +123,7 @@ esankhyiki.get_metadata(
 | PLFS | `indicator_code`, `frequency_code` |
 | CPI | `base_year`, `level` |
 | IIP | `base_year`, `frequency` |
+| ISP | `frequency_code` |
 | ASI | `classification_year` |
 | NAS | `indicator_code`, `base_year`, `frequency_code` |
 | WPI | *(none)* |
@@ -131,8 +134,16 @@ esankhyiki.get_metadata(
 | NFHS | `indicator_code` |
 | ENVSTATS | `indicator_code` |
 | RBI | `indicator_code` or `sub_indicator_code` |
+| NSS73 | `indicator_code` |
+| NSS75 | `indicator_code` ,`survey_code`|
+| NSS75E | `indicator_code`,`survey_code` |
+| NSS76 | `indicator_code` ,`survey_code`|
+| NSS76C | `indicator_code`,`survey_code` |
 | NSS77 | `indicator_code` |
 | NSS78 | `indicator_code` |
+| NSS79 | `indicator_code` |
+| NSS80 | `indicator_code` ,`survey_code`|
+| NSS80C | `indicator_code` ,`survey_code`|
 | CPIALRL | `indicator_code` |
 | HCES | `indicator_code` |
 | TUS | `indicator_code` |
@@ -211,8 +222,16 @@ csv = esankhyiki.get_data("PLFS", filters, format="csv")
 | **NFHS** | National Family Health Survey | Health, fertility, mortality |
 | **ENVSTATS** | Environment Statistics | Climate, biodiversity, pollution |
 | **RBI** | RBI Statistics | Trade, forex, exchange rates |
+| **NSS73** | NSS 73rd Round | Unincorporated Non-Agricultural Enterprises |
+| **NSS75** | NSS 75th Round | Household Social Consumption: Health |
+| **NSS75E** | NSS 75th Round | Household Social Consumption: Education |
+| **NSS76** | NSS 76th Round | Persons with Disabilities |
+| **NSS76C** | NSS 76th Round | Drinking Water, Sanitation, Hygiene and Housing Conditions |
 | **NSS77** | NSS 77th Round | Agricultural households |
 | **NSS78** | NSS 78th Round | Living conditions |
+| **NSS79** | NSS 79th Round | Education, health, digital literacy (CAMS/AYUSH) |
+| **NSS80** | NSS 80th Round | Comprehensive Annual Modular Survey |
+| **NSS80C** | NSS 80th Round | Household Consumption Expenditure Survey |
 | **CPIALRL** | CPI for Rural Labourers | Rural inflation |
 | **HCES** | Household Consumption | Spending, poverty, Gini |
 | **TUS** | Time Use Survey | Time allocation, unpaid work |
@@ -220,6 +239,7 @@ csv = esankhyiki.get_data("PLFS", filters, format="csv")
 | **NSS79** | NSS 79th Round | Education, health, digital literacy (CAMS/AYUSH) |
 | **UDISE** | Unified District Information System | School education statistics |
 | **MNRE** | Renewable Energy (MNRE) | State-wise installed capacity for solar, wind, hydro, bio, and total renewable power |
+| **ISP** | Index of Services Production | Trial series for services sector output |
 
 ---
 

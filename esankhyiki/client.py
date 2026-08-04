@@ -72,14 +72,22 @@ class MoSPI:
             "NFHS": "/api/nfhs/getNfhsRecords",
             "ENVSTATS": "/api/env/getEnvStatsRecords",
             "RBI": "/api/rbi/getRbiRecords",
+            "NSS73": "/api/nss-73/getNss73Records",
+            "NSS75": "/api/nss-75/getNss75Records",
+            "NSS75E": "/api/nss-75/getNss75Records",
+            "NSS76": "/api/nss-76/getNss76Records",
+            "NSS76C": "/api/nss-76/getNss76Records",
             "NSS77": "/api/nss-77/getNss77Records",
             "NSS78": "/api/nss-78/getNss78Records",
             "CPIALRL": "/api/cpialrl/getCpialrlRecords",
             "HCES": "/api/hces/getHcesRecords",
             "TUS": "/api/tus/getTusRecords",
             "NSS79": "/api/nss-79/getNSS79Records",
+            "NSS80": "/api/nss-80/getNSS80Records",
+            "NSS80C": "/api/nss-80/getNSS80Records",
             "UDISE": "/api/udise/getUdiseRecords",
             "MNRE": "/api/mnre/getDataByEnergy",
+            "ISP": "/api/isp/getISPRecords",
         }
 
     def get_data(self, dataset_name: str, params: Optional[Dict] = None) -> Dict[str, Any]:
@@ -98,6 +106,13 @@ class MoSPI:
 
         try:
             response = self.session.get(full_url, params=params, timeout=30)
+            print("=" * 80)
+            print("URL:", response.url)
+            print("Status:", response.status_code)
+            print("Content-Type:", response.headers.get("Content-Type"))
+            print("Response:")
+            print(response.text)
+            print("=" * 80)
             response.raise_for_status()
 
             format_param = params.get("Format", "JSON") if params else "JSON"
@@ -451,6 +466,159 @@ class MoSPI:
             return {"error": str(e), "statusCode": False}
 
     # =========================================================================
+    # NSS73
+    # =========================================================================
+
+    def get_nss73_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-73/getNss73IndicatorList", timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss73_filters(self, indicator_code: int) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-73/getNss73FiltersByIndicatorCode",
+                params=params,
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    # =========================================================================
+    # NSS75 / NSS75E
+    # =========================================================================
+
+    def get_nss75_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-75/getIndicatorList",
+                params={"survey_code": 1},
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss75e_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-75/getIndicatorList",
+                params={"survey_code": 2},
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss75_filters(self, indicator_code: int, survey_code: int = 1) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code, "survey_code": survey_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-75/getNss75FilterByIndicatorId",
+                params=params,
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    # =========================================================================
+    # NSS76 / NSS76C
+    # =========================================================================
+
+    def get_nss76_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-76/getIndicatorList",
+                params={"survey_code": 2},
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss76c_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-76/getIndicatorList",
+                params={"survey_code": 1},
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss76_filters(self, indicator_code: int, survey_code: int = 2) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code, "survey_code": survey_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-76/getNss76FilterByIndicatorId",
+                params=params,
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    # =========================================================================
+    # NSS80 / NSS80C
+    # =========================================================================
+
+    def get_nss80_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-80/getIndicatorList",
+                params={"survey_code": 1},
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+
+    def get_nss80c_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-80/getIndicatorList",
+                params={"survey_code": 2},
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+
+    def get_nss80_filters(self,indicator_code: int,survey_code: int = 1,) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code,"survey_code": survey_code,}
+
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-80/getFilterBySurveryAndIndicator",
+                params=params,
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    # =========================================================================
     # NSS77
     # =========================================================================
 
@@ -644,6 +812,34 @@ class MoSPI:
         try:
             response = self.session.get(
                 f"{self.base_url}/api/mnre/getFilterByEnergy", params=params, timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    # =========================================================================
+    # ISP
+    # =========================================================================
+
+    def get_isp_indicators(self) -> Dict[str, Any]:
+        """Return the frequency options supported by Index of Service Production."""
+        return {
+            "data": [
+                {"frequency_code": 1, "desc": "Yearly"},
+                {"frequency_code": 2, "desc": "Monthly"},
+            ],
+            "statusCode": True,
+        }
+
+    def get_isp_filters(self, frequency_code: int) -> Dict[str, Any]:
+        """Return ISP filter values for the selected frequency."""
+        params = {"frequency_code": frequency_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/isp/getISPFilter",
+                params=params,
+                timeout=30,
             )
             response.raise_for_status()
             return response.json()

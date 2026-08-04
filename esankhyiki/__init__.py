@@ -24,7 +24,7 @@ from .datasets import (
 from .exceptions import MospiError, InvalidDatasetError, InvalidFilterError, APIError, NoDataError
 from .formatters import format_response
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 __all__ = ["list_datasets", "get_indicators", "get_metadata", "get_data"]
 # 73 61 72 74 68 61 6b 20 26 20 73 61 74 76 69 6b
 __flavor__ = bytes([0x73,0x61,0x72,0x74,0x68,0x61,0x6b,0x20,0x26,0x20,0x73,0x61,0x74,0x76,0x69,0x6b]).decode()
@@ -98,7 +98,7 @@ def _check_empty_metadata(result, dataset, **params):
 
 def list_datasets(format: str = "dict"):
     """
-    Returns an overview of all 22 MoSPI statistical datasets.
+    Returns an overview of all available MoSPI statistical datasets.
 
     This is the starting point -call this first to identify the right dataset.
 
@@ -127,8 +127,8 @@ def get_indicators(
 
     Args:
         dataset: Dataset name (PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY, AISHE,
-                 ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS77, NSS78, CPIALRL,
-                 HCES, TUS, EC, NSS79, UDISE, MNRE).
+                 ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS73, NSS75, NSS75E, NSS76, NSS76C,
+                 NSS77, NSS78, CPIALRL, HCES, TUS, EC, NSS79, NSS80, UDISE, MNRE, ISP).
         format: Output format -"dict" (default), "df"/"dataframe", or "csv".
 
     Returns:
@@ -146,6 +146,11 @@ def get_indicators(
         "NFHS": _client.get_nfhs_indicators,
         "ENVSTATS": _client.get_envstats_indicators,
         "RBI": _client.get_rbi_indicators,
+        "NSS73": _client.get_nss73_indicators,
+        "NSS75": _client.get_nss75_indicators,
+        "NSS75E": _client.get_nss75e_indicators,
+        "NSS76": _client.get_nss76_indicators,
+        "NSS76C": _client.get_nss76c_indicators,
         "NSS77": _client.get_nss77_indicators,
         "NSS78": _client.get_nss78_indicators,
         "CPIALRL": _client.get_cpialrl_indicators,
@@ -153,15 +158,25 @@ def get_indicators(
         "TUS": _client.get_tus_indicators,
         "EC": _client.get_ec_indicators,
         "NSS79": _client.get_nss79_indicators,
+        "NSS80": _client.get_nss80_indicators,
+        "NSS80C": _client.get_nss80c_indicators,
         "UDISE": _client.get_udise_indicators,
         "MNRE": _client.get_mnre_indicators,
+        "ISP": _client.get_isp_indicators,
         "CPI": _client.get_cpi_base_years,
         "IIP": _client.get_iip_indicators,
         "WPI": _client.get_wpi_indicators,
         "ASI": _client.get_asi_indicators,
     }
 
-    result = indicator_methods[dataset]()
+    indicator_method = indicator_methods.get(dataset)
+    if indicator_method is None:
+        raise APIError(
+            f"{dataset} does not expose an indicator-list endpoint in its Swagger specification.",
+            dataset=dataset,
+        )
+
+    result = indicator_method()
     result = enrich_indicators(result, dataset)
     return format_response(result, format)
 
@@ -317,6 +332,41 @@ def get_metadata(
             result["api_params"] = get_swagger_param_definitions("RBI")
             result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
 
+        elif dataset == "NSS73":
+            result = _client.get_nss73_filters(indicator_code=indicator_code)
+            result["api_params"] = get_swagger_param_definitions("NSS73")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS75":
+            result = _client.get_nss75_filters(indicator_code=indicator_code, survey_code=1)
+            result["api_params"] = get_swagger_param_definitions("NSS75")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS75E":
+            result = _client.get_nss75_filters(indicator_code=indicator_code, survey_code=2)
+            result["api_params"] = get_swagger_param_definitions("NSS75E")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS76":
+            result = _client.get_nss76_filters(indicator_code=indicator_code, survey_code=2)
+            result["api_params"] = get_swagger_param_definitions("NSS76")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS76C":
+            result = _client.get_nss76_filters(indicator_code=indicator_code, survey_code=1)
+            result["api_params"] = get_swagger_param_definitions("NSS76C")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS80":
+            result = _client.get_nss80_filters(indicator_code=indicator_code, survey_code=1)
+            result["api_params"] = get_swagger_param_definitions("NSS80")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS80C":
+            result = _client.get_nss80_filters(indicator_code=indicator_code, survey_code=2)
+            result["api_params"] = get_swagger_param_definitions("NSS80C")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
         elif dataset == "NSS77":
             result = _client.get_nss77_filters(indicator_code=indicator_code)
             result["api_params"] = get_swagger_param_definitions("NSS77")
@@ -360,6 +410,11 @@ def get_metadata(
             result = _client.get_mnre_filters(type_of_renewable_energy_code=indicator_code)
             result["api_params"] = get_swagger_param_definitions("MNRE")
 
+        elif dataset == "ISP":
+            result = _client.get_isp_filters(frequency_code=frequency_code or 1)
+            result["api_params"] = get_swagger_param_definitions("ISP")
+            result = _check_empty_metadata(result, dataset, frequency_code=frequency_code or 1)
+
         else:
             raise InvalidDatasetError(dataset, VALID_DATASETS)
 
@@ -386,8 +441,8 @@ def get_data(dataset: str, filters: Dict[str, Any], format: str = "dict"):
 
     Args:
         dataset: Dataset name (PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY, AISHE,
-                 ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS77, NSS78, CPIALRL,
-                 HCES, TUS, EC, NSS79, UDISE, MNRE).
+                 ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS73, NSS75, NSS75E, NSS76, NSS76C,
+                 NSS77, NSS78, CPIALRL, HCES, TUS, EC, NSS79, NSS80, UDISE, MNRE, ISP).
         filters: Key-value pairs from get_metadata filter_values.
         format: Output format -"dict" (default), "df"/"dataframe", or "csv".
 
@@ -442,8 +497,10 @@ def get_data(dataset: str, filters: Dict[str, Any], format: str = "dict"):
 
     transformed_filters = transform_filters(filters)
 
-    # Auto-inject Format=JSON if not set (required by most endpoints, except UDISE)
-    if "Format" not in transformed_filters and dataset != "UDISE":
+    # Auto-inject Format=JSON only for endpoints that declare it in their spec.
+    # ISP always returns JSON and does not accept a Format query parameter.
+    swagger_params = get_swagger_param_definitions(dataset)
+    if "Format" not in transformed_filters and any(p["name"] == "Format" for p in swagger_params):
         transformed_filters["Format"] = "JSON"
 
     # RBI: accept indicator_code but map to sub_indicator_code

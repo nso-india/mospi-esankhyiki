@@ -1,70 +1,153 @@
-"""Tests for esankhyiki.get_indicators() -requires network access."""
+"""Tests for esankhyiki.get_indicators().
+
+These tests require network access to the MoSPI APIs.
+"""
 
 import pytest
+
 import esankhyiki
-from esankhyiki.exceptions import APIError, InvalidDatasetError, NoDataError
+from esankhyiki.exceptions import (
+    APIError,
+    InvalidDatasetError,
+    NoDataError,
+)
 
 pytestmark = pytest.mark.network
 
 
+# ============================================================================
+# Dataset Groups
+# ============================================================================
+
+SIMPLE_DATASETS = [
+    "ASI",
+    "ENERGY",
+    "AISHE",
+    "ASUSE",
+    "GENDER",
+    "NFHS",
+    "ENVSTATS",
+    "RBI",
+    "NSS73",
+    "NSS75",
+    "NSS75E",
+    "NSS76",
+    "NSS76C",
+    "NSS77",
+    "NSS78",
+    "CPIALRL",
+    "HCES",
+    "TUS",
+    "NSS79",
+    "NSS80",
+    "NSS80C",
+    "MNRE",
+]
+
+STANDARD_DATASETS = [
+    "CPI",
+    "IIP",
+    "EC",
+]
+
+
+# ============================================================================
+# Helper
+# ============================================================================
+
+def assert_indicator_response(dataset: str):
+    """
+    Assert that get_indicators() returns a valid response.
+
+    Live APIs may occasionally return temporary APIError or NoDataError.
+    Those responses are considered acceptable during network testing.
+    """
+    try:
+        result = esankhyiki.get_indicators(dataset)
+
+    except (APIError, NoDataError) as exc:
+        assert str(exc)
+
+    else:
+        assert isinstance(result, (dict, list))
+        assert len(result) > 0
+
+
+# ============================================================================
+# Invalid Dataset
+# ============================================================================
+
 def test_invalid_dataset_raises():
+    """Unknown dataset should raise InvalidDatasetError."""
+
     with pytest.raises(InvalidDatasetError):
         esankhyiki.get_indicators("FAKE")
 
 
+# ============================================================================
+# PLFS
+# ============================================================================
+
 def test_plfs_indicators():
+    """PLFS should return grouped indicators."""
+
     result = esankhyiki.get_indicators("PLFS")
-    assert "indicators_by_frequency" in result or "error" in result
+
+    assert (
+        "indicators_by_frequency" in result
+        or "error" in result
+    )
 
 
-def test_cpi_indicators():
-    result = esankhyiki.get_indicators("CPI")
-    assert isinstance(result, (dict, list))
+# ============================================================================
+# ISP
+# ============================================================================
 
+def test_isp_indicators():
+    """ISP should return the supported frequencies."""
 
-def test_iip_indicators():
-    result = esankhyiki.get_indicators("IIP")
-    assert isinstance(result, (dict, list))
+    expected = [
+        {
+            "frequency_code": 1,
+            "desc": "Yearly",
+        },
+        {
+            "frequency_code": 2,
+            "desc": "Monthly",
+        },
+    ]
 
+    assert esankhyiki.get_indicators("ISP") == expected
 
-# def test_wpi_indicators():
-#     result = esankhyiki.get_indicators("WPI")
-#     assert isinstance(result, (dict, list))
-
+# ============================================================================
+# NAS
+# ============================================================================
 
 def test_nas_indicators():
-    try:
-        result = esankhyiki.get_indicators("NAS")
-    except (NoDataError, APIError) as exc:
-        assert str(exc)
-    else:
-        assert isinstance(result, (dict, list))
+    """NAS endpoint may occasionally return transient API errors."""
+
+    assert_indicator_response("NAS")
 
 
-def test_ec_indicators():
-    result = esankhyiki.get_indicators("EC")
+# ============================================================================
+# CPI / IIP / EC
+# ============================================================================
+
+@pytest.mark.parametrize("dataset", STANDARD_DATASETS)
+def test_standard_indicator_response(dataset):
+    """Datasets should return either dict or list."""
+
+    result = esankhyiki.get_indicators(dataset)
+
     assert isinstance(result, (dict, list))
 
 
-@pytest.mark.parametrize("dataset", [
-    "ASI", "ENERGY", "AISHE", "ASUSE", "GENDER", "NFHS",
-    "ENVSTATS", "RBI", "NSS77", "NSS78", "CPIALRL", "HCES", "TUS"
-])
+# ============================================================================
+# Simple Indicator APIs
+# ============================================================================
+
+@pytest.mark.parametrize("dataset", SIMPLE_DATASETS)
 def test_simple_indicators(dataset):
-    try:
-        result = esankhyiki.get_indicators(dataset)
-    except (NoDataError, APIError) as exc:
-        assert str(exc)
-    else:
-        assert isinstance(result, (dict, list))
-        assert len(result) > 0
+    """Verify indicator APIs for all standard datasets."""
 
-
-def test_mnre_indicators():
-    try:
-        result = esankhyiki.get_indicators("MNRE")
-    except (NoDataError, APIError) as exc:
-        assert str(exc)
-    else:
-        assert isinstance(result, (dict, list))
-        assert len(result) > 0
+    assert_indicator_response(dataset)
