@@ -13,7 +13,7 @@ VALID_DATASETS = [
     "PLFS", "CPI", "IIP", "ASI", "NAS", "WPI", "ENERGY",
     "AISHE", "ASUSE", "GENDER", "NFHS", "ENVSTATS", "RBI",
     "NSS77", "NSS78", "CPIALRL", "HCES", "TUS", "EC",
-    "NSS79", "UDISE", "MNRE",
+    "NSS73", "NSS75", "NSS75E", "NSS76", "NSS76C", "NSS79", "NSS80", "NSS80C","UDISE", "MNRE", "ISP",
 ]
 
 DATASET_SWAGGER = {
@@ -34,6 +34,11 @@ DATASET_SWAGGER = {
     "NFHS": ("swagger_user_nfhs.yaml", "/api/nfhs/getNfhsRecords"),
     "ENVSTATS": ("swagger_user_envstats.yaml", "/api/env/getEnvStatsRecords"),
     "RBI": ("swagger_user_rbi.yaml", "/api/rbi/getRbiRecords"),
+    "NSS73": ("swagger_user_nss73.yaml", "/api/nss-73/getNss73Records"),
+    "NSS75": ("swagger_user_nss75.yaml", "/api/nss-75/getNss75Records"),
+    "NSS75E": ("swagger_user_nss75e.yaml", "/api/nss-75/getNss75Records"),
+    "NSS76": ("swagger_user_nss76.yaml", "/api/nss-76/getNss76Records"),
+    "NSS76C": ("swagger_user_nss76c.yaml", "/api/nss-76/getNss76Records"),
     "NSS77": ("swagger_user_nss77.yaml", "/api/nss-77/getNss77Records"),
     "NSS78": ("swagger_user_nss78.yaml", "/api/nss-78/getNss78Records"),
     "CPIALRL": ("swagger_user_cpialrl.yaml", "/api/cpialrl/getCpialrlRecords"),
@@ -41,8 +46,11 @@ DATASET_SWAGGER = {
     "TUS": ("swagger_user_tus.yaml", "/api/tus/getTusRecords"),
     "EC": ("swagger_user_ec.yaml", "/EC/filterDistrict6"),
     "NSS79": ("swagger_user_nss79.yaml", "/api/nss-79/getNSS79Records"),
+    "NSS80": ("swagger_user_nss80.yaml", "/api/nss-80/getNSS80Records"),
+    "NSS80C": ("swagger_user_nss80c.yaml", "/api/nss-80/getNSS80Records"),
     "UDISE": ("swagger_user_udise.yaml", "/api/udise/getUdiseRecords"),
     "MNRE": ("swagger_user_mnre.yaml", "/api/mnre/getDataByEnergy"),
+    "ISP": ("swagger_user_isp.yaml", "/api/isp/getISPRecords"),
 }
 
 # Dataset name -> API key mapping for get_data routing
@@ -62,14 +70,22 @@ DATASET_API_MAP = {
     "NFHS": "NFHS",
     "ENVSTATS": "ENVSTATS",
     "RBI": "RBI",
+    "NSS73": "NSS73",
+    "NSS75": "NSS75",
+    "NSS75E": "NSS75E",
+    "NSS76": "NSS76",
+    "NSS76C": "NSS76C",
     "NSS77": "NSS77",
     "NSS78": "NSS78",
     "CPIALRL": "CPIALRL",
     "HCES": "HCES",
     "TUS": "TUS",
     "NSS79": "NSS79",
+    "NSS80": "NSS80",
+    "NSS80C": "NSS80C",
     "UDISE": "UDISE",
     "MNRE": "MNRE",
+    "ISP": "ISP",
 }
 
 
@@ -114,7 +130,20 @@ def get_swagger_param_definitions(dataset: str) -> list:
         return []
     with open(swagger_path, "r") as f:
         spec = yaml.safe_load(f)
-    return spec.get("paths", {}).get(endpoint_path, {}).get("get", {}).get("parameters", [])
+    parameters = spec.get("paths", {}).get(endpoint_path, {}).get("get", {}).get("parameters", [])
+    component_parameters = spec.get("components", {}).get("parameters", {})
+
+    # OpenAPI permits endpoints to reference reusable parameter definitions.
+    # Resolve local references so the validation helpers always receive a
+    # complete definition with a parameter name and required flag.
+    resolved = []
+    for parameter in parameters:
+        ref = parameter.get("$ref") if isinstance(parameter, dict) else None
+        if ref and ref.startswith("#/components/parameters/"):
+            component_name = ref.rsplit("/", 1)[-1]
+            parameter = component_parameters.get(component_name, parameter)
+        resolved.append(parameter)
+    return resolved
 
 
 def get_swagger_params(dataset: str) -> list:

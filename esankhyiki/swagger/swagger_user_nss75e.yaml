@@ -1,0 +1,117 @@
+openapi: 3.0.1
+info:
+  title: All India Survey on Household Social Consumption on Education in India
+  version: 1.0.0
+servers:
+- url:   https://api.mospi.gov.in/
+tags:
+- name: NSS75
+  description: ( National Sample Survey 75. )
+paths:
+  /api/nss-75/getNss75Records:
+    get:
+      tags:
+      - NSS75
+      operationId: NSS75EIndicatorValues.
+      # summary: Get  data for an indicator
+      description: |
+        - **Required:** `survey_code`, `indicator_code`  
+        - **Filters (optional):** state_code, sector_code, gender_code, type_of_course_code, item_of_expenditure_code, facility_code, highest_level_of_education_successfully_completed_code, level_of_education_code, level_of_current_attendance_code
+
+      parameters:  
+        - in: query
+          name: survey_code
+          required: true
+          schema: { type: integer, enum: [2] }
+          # default: 2  
+        - in: query
+          name: indicator_code
+          required: true
+          schema: { type: integer }
+          description: Enter The Indicator code (43 - 55)
+        - in: query
+          name: state_code
+          schema: { type: integer }  
+          description: Enter The State / UT (1-39)
+        - in: query
+          name: sector_code
+          schema: { type: integer }
+          description: Enter The Sector code (1-4) 
+        - in: query
+          name: gender_code
+          schema: { type: integer }
+          description: Enter The Gender code (1-7) 
+        - in: query
+          name: type_of_course_code
+          schema: { type: integer }
+          description: Enter The Course Type code (1-4)
+        - in: query
+          name: item_of_expenditure_code
+          schema: { type: integer }
+          description: Enter The Expenditure Type code (1-6)
+        - in: query
+          name: facility_code
+          schema: { type: integer }
+          description: Enter The Facility Type code (1-2)
+        - in: query
+          name: highest_level_of_education_successfully_completed_code
+          schema: { type: integer }
+          description: Enter The Highest Level of Education Successfully Completed code (1-7)
+        - in: query
+          name: level_of_education_code
+          schema: { type: integer }
+          description: Enter The Level of Education code (1-6)
+        - in: query
+          name: level_of_current_attendance_code
+          schema: { type: integer }
+          description: Enter The Level of Current Attendance code (1-8)
+          
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20 }
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: format
+          schema:
+            type: string
+          description: Set to `xlsx` to download as excel
+
+      responses:
+        "200":
+          description: A JSON array of user information
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+            text/csv:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+      security:
+      - bearerAuth: []
+ 
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      description: Bearer token to access these api endpoints
+      name: Authorization
+      in: header
+x-original-swagger-version: "2.0"

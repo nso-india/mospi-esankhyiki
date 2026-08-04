@@ -1,0 +1,101 @@
+openapi: 3.0.1
+
+info:
+  title: API for Index of Service Production (ISP)
+  version: 1.0.0
+
+servers:
+  - url: https://api.mospi.gov.in/
+
+tags:
+  - name: Index of Service Production
+    description: ISP API for Industrial Service Production Statistics
+
+paths:
+  /api/isp/getISPRecords:
+    get:
+      tags:
+        - Index of Service Production
+
+      summary: Get ISP Data
+
+      description: >
+        API to fetch Index of Service Production (ISP) data.
+
+        Optional filters:
+        frequency_code, year,month_code, broad_sub_sector_code,limit, page
+
+      parameters:
+        - in: query
+          name: frequency_code
+          schema:
+            type: integer
+
+        - in: query
+          name: year
+          schema:
+            type: string
+
+        - in: query
+          name: month_code
+          schema:
+            type: integer
+
+        - in: query
+          name: broad_sub_sector_code
+          schema:
+            type: integer
+
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+
+      responses:
+        "200":
+          description: Successful response
+
+        "400":
+          description: Invalid parameters
+
+        "409":
+          description: No data found
+
+      security:
+        - bearerAuth: []
+
+  /api/isp/getISPFilter:
+    get:
+      tags:
+        - Index of Service Production
+      summary: Get ISP filter values
+      description: Returns filter values available for the selected frequency.
+      parameters:
+        - in: query
+          name: frequency_code
+          required: true
+          schema:
+            type: integer
+            enum: [1, 2]
+      responses:
+        "200":
+          description: Successful response
+        "400":
+          description: Invalid frequency code
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Bearer token to access the API

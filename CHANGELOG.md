@@ -5,7 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.4] - 2026-07-31
+
+### Added
+
+- Added support for 8 new MoSPI datasets:
+  - NSS73 (73rd Round - Unincorporated Non-Agricultural Enterprises)
+  - NSS75 (75th Round - Household Social Consumption: Health)
+  - NSS75E (75th Round - Household Social Consumption: Education)
+  - NSS76 (76th Round - Persons with Disabilities)
+  - NSS76C (76th Round - Drinking Water, Sanitation, Hygiene and Housing Conditions)
+  - NSS80 (80th Round - Comprehensive Annual Modular Survey)
+  - NSS80C (80th Round - Household Consumption Expenditure Survey)
+  - ISP (Index of Services Production - Trial Series)
+- Added indicator, metadata, and data retrieval support for all newly introduced datasets.
+- Added static indicator support for ISP (Yearly and Monthly frequencies).
+- Added Swagger-based parameter validation for all newly supported datasets.
+- Added documentation, examples, and Jupyter notebook coverage for the new datasets.
+- Total supported datasets: 30.
+
+### Fixed
+
+- Improved metadata handling for NSS75, NSS75E, NSS76, NSS76C, NSS80, and NSS80C using survey-specific APIs.
+- Standardized indicator responses across newly added datasets.
+- Improved validation and error handling for newly supported APIs.
+- Added comprehensive unit tests covering indicators, metadata, data retrieval, and dataset listing for the new datasets.
+
+### Changed
+
+- Extended the 4-step workflow (`list_datasets` → `get_indicators` → `get_metadata` → `get_data`) to support all newly added datasets.
+- Updated dataset registry, aliases, API mappings, Swagger specifications, and validation logic to include the latest datasets.
+
 
 ## [0.1.3] - 2026-04-30
 
