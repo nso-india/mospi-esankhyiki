@@ -148,7 +148,6 @@ esankhyiki.get_metadata(
 | HCES | `indicator_code` |
 | TUS | `indicator_code` |
 | EC | `indicator_code` (1=EC6, 2=EC5, 3=EC4) |
-| NSS79 | `indicator_code` |
 | UDISE | `indicator_code` |
 | MNRE | `indicator_code` (1=Solar, 2=Wind, 3=Hydro, 4=Bio, 5=Total) |
 
@@ -236,7 +235,6 @@ csv = esankhyiki.get_data("PLFS", filters, format="csv")
 | **HCES** | Household Consumption | Spending, poverty, Gini |
 | **TUS** | Time Use Survey | Time allocation, unpaid work |
 | **EC** | Economic Census | District-wise establishments |
-| **NSS79** | NSS 79th Round | Education, health, digital literacy (CAMS/AYUSH) |
 | **UDISE** | Unified District Information System | School education statistics |
 | **MNRE** | Renewable Energy (MNRE) | State-wise installed capacity for solar, wind, hydro, bio, and total renewable power |
 | **ISP** | Index of Services Production | Trial series for services sector output |
