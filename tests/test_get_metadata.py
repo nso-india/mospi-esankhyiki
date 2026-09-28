@@ -30,6 +30,11 @@ SIMPLE_DATASETS = [
     "NSS78",
     "CPIALRL",
     "HCES",
+    "NSS71",
+    "NSS71E",
+    "NSS72",
+    "NSS72T",
+    "NSS74",
     "TUS",
 ]
 
@@ -42,6 +47,7 @@ SPECIAL_METADATA_DATASETS = [
             "base_year": "2022-23",
             "series": "Current",
             "frequency_code": 1,
+            "account_code": 1,
         },
     ),
     (

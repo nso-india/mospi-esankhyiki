@@ -1,0 +1,153 @@
+openapi: 3.0.1
+info:
+  title:  "All India Survey on Social Consumption: Health in India"
+  version: 1.0.0
+servers:
+- url:   https://api.mospi.gov.in/
+tags:
+- name: NSS71
+  description: ( National Sample Survey 71.)
+paths:
+  /api/nss-71/getNss71Records:
+    get:
+      tags:
+      - NSS71
+      operationId: NSS71IndicatorValues.
+      # summary: Get  data for an indicator
+      description: |
+        - **Required:** `survey_code`, `indicator_code`  
+        - **Filters (optional):** state_code, sector_code, gender_code, social_group_code, age_group_code, religion_code, ailment_type_code, broad_ailment_category_code, detailed_ailment_type_code, expenditure_type_code, hospital_type_code, hospital_sub_type_code, hospitalised_cases_by_level_of_care_code, hospitalised_cases_by_nature_of_treatment_code, hospitalized_cases_by_mother_age_code, level_of_care_code, mobility_code, nature_of_treatment_code, quintile_class_of_umpce_code
+         
+      parameters:  
+        - in: query
+          name: survey_code
+          required: true
+          schema: { type: integer, enum: [2] }
+          # default: 1      
+        - in: query
+          name: indicator_code
+          required: true
+          schema: { type: integer }
+          description: Enter The Indicator code (13 - 46)
+        - in: query
+          name: state_code
+          schema: { type: integer }  
+          description: Enter The State / UT (1-37)
+        - in: query
+          name: sector_code
+          schema: { type: integer }
+          description: Enter The Sector code (1-4) 
+        - in: query
+          name: gender_code
+          schema: { type: integer }
+          description: Enter The Gender code (1-5) 
+        - in: query
+          name: social_group_code
+          schema: { type: integer }
+          description: Enter The Social Group code (1-5)
+        - in: query
+          name: age_group_code
+          schema: { type: integer }   
+          description: Enter The Age Group code (1-40)
+        - in: query
+          name: religion_code
+          schema: { type: integer }   
+          description: Enter The Religion code (1-9)
+        - in: query
+          name: ailment_type_code
+          schema: { type: integer }   
+          description: Enter The Ailment Type code (1-2)
+        - in: query
+          name: broad_ailment_category_code
+          schema: { type: integer }  
+          description: Enter The Broad Ailment Category code (1-17)
+        - in: query
+          name: expenditure_type_code
+          schema: { type: integer }   
+          description: Enter The Expenditure Type code (1-9)
+        - in: query
+          name: hospital_type_code
+          schema: { type: integer }   
+          description: Enter The Hospital Type code (1-4)
+        - in: query
+          name: hospital_sub_type_code
+          schema: { type: integer }   
+          description: Enter The Hospital Sub Type code (1-4)
+        - in: query
+          name: hospitalised_cases_by_level_of_care_code
+          schema: { type: integer }   
+          description: Enter The Hospitalised Cases By Level Of Care code (1-4)
+        - in: query
+          name: hospitalised_cases_by_nature_of_treatment_code
+          schema: { type: integer }   
+          description: Enter The Hospitalised Cases By Nature Of Treatment code (1-6)
+        - in: query
+          name: hospitalized_cases_by_mother_age_code
+          schema: { type: integer }  
+          description: Enter The Hospitalized Cases By Mother Age code (1-8)
+        - in: query
+          name: level_of_care_code
+          schema: { type: integer }  
+          description: Enter The Level Of Care code (1-5)
+        - in: query
+          name: mobility_code
+          schema: { type: integer }   
+          description: Enter The Mobility code (1-5)
+        - in: query
+          name: nature_of_treatment_code
+          schema: { type: integer }  
+          description: Enter The Nature Of Treatment code (1-6)
+        - in: query
+          name: quintile_class_of_umpce_code
+          schema: { type: integer }  
+          description: Enter The Quintile Class Of UMPCE code (1-6)
+
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20 }
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: format
+          schema:
+            type: string
+          description: Set to `xlsx` to download as excel
+
+      responses:
+        "200":
+          description: A JSON array of user information
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+            text/csv:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+      security:
+      - bearerAuth: []
+ 
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      description: Bearer token to access these api endpoints
+      name: Authorization
+      in: header
+x-original-swagger-version: "2.0"

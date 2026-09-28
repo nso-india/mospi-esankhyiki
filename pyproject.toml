@@ -10,8 +10,7 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
 authors = [
-    { name = "Satvik Bajpai" },
-    { name = "Sarthak Srivastava" },
+    { name = "Ministry of Statistics and Programme Implementation, Government of India (MoSpi)" },
 ]
 keywords = ["esankhyiki", "mospi", "nso", "nsoindia", "india", "statistics", "government", "data", "api"]
 classifiers = [

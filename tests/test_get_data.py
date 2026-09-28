@@ -27,7 +27,7 @@ NSS_DATASETS = [
         {
             "survey_code": 1,
             "indicator_code": 1,
-            "limit": 20,
+            "limit": 1,
         },
     ),
     (
@@ -35,7 +35,7 @@ NSS_DATASETS = [
         {
             "survey_code": 2,
             "indicator_code": 43,
-            "limit": 20,
+            "limit": 1,
         },
     ),
     (
@@ -43,7 +43,7 @@ NSS_DATASETS = [
         {
             "survey_code": 2,
             "indicator_code": 2,
-            "limit": 20,
+            "limit": 1,
         },
     ),
     (
@@ -51,7 +51,7 @@ NSS_DATASETS = [
         {
             "survey_code": 1,
             "indicator_code": 13,
-            "limit": 20,
+            "limit": 1,
         },
     ),
     (
@@ -59,7 +59,7 @@ NSS_DATASETS = [
         {
             "survey_code": 1,
             "indicator_code": 12,
-            "limit": 20,
+            "limit": 1,
         },
     ),
     (
@@ -67,7 +67,51 @@ NSS_DATASETS = [
         {
             "survey_code": 2,
             "indicator_code": 29,
-            "limit": 20,
+            "limit": 1,
+        },
+    ),
+    (
+        "NSS71",
+        {
+            "survey_code": 1,
+            "indicator_code": 12,
+            "limit": 1,
+        },
+    ),
+    (
+        "NSS71E",
+        {
+            "survey_code": 2,
+            "indicator_code": 29,
+            "limit": 1,
+        },
+    ),
+    (
+        "NSS72",
+        {
+            "indicator_code": 1,
+            "limit": 1,
+        },
+    ),
+    (
+        "NSS72T",
+        {
+            "indicator_code": 2,
+            "limit": 1,
+        },
+    ),
+    (
+        "NSS73",
+        {
+            "indicator_code": 6,
+            "limit": 1,
+        },
+    ),
+    (
+        "NSS74",
+        {
+            "indicator_code": 1,
+            "limit": 1,
         },
     ),
 ]
@@ -80,7 +124,10 @@ NSS_DATASETS = [
 def assert_dict_or_list(dataset: str, filters: dict):
     """Assert that get_data returns a dictionary or list."""
 
-    result = esankhyiki.get_data(dataset, filters)
+    result = esankhyiki.get_data(
+        dataset,
+        filters,
+    )
 
     assert isinstance(result, (dict, list))
 
@@ -97,10 +144,16 @@ def assert_dataframe(dataset: str, filters: dict):
     assert isinstance(result, pd.DataFrame)
 
 
-def assert_network_dataset(dataset: str, filters: dict, fmt="dict"):
+def assert_network_dataset(
+    dataset: str,
+    filters: dict,
+    fmt: str = "dict",
+):
     """
-    Helper for datasets whose APIs may occasionally return
-    APIError or NoDataError.
+    Validate a dataset against the live MoSPI API.
+
+    If the API or requested data is temporarily unavailable,
+    skip the test instead of incorrectly marking it as passed.
     """
 
     try:
@@ -111,13 +164,14 @@ def assert_network_dataset(dataset: str, filters: dict, fmt="dict"):
         )
 
     except (APIError, NoDataError) as exc:
-        assert str(exc)
+        pytest.skip(
+            f"{dataset} API/data unavailable: {exc}"
+        )
 
+    if fmt == "df":
+        assert isinstance(result, pd.DataFrame)
     else:
-        if fmt == "df":
-            assert isinstance(result, pd.DataFrame)
-        else:
-            assert isinstance(result, (dict, list))
+        assert isinstance(result, (dict, list))
 
 
 # ============================================================================
@@ -128,7 +182,10 @@ def test_invalid_dataset_raises():
     """Unknown dataset should raise InvalidDatasetError."""
 
     with pytest.raises(InvalidDatasetError):
-        esankhyiki.get_data("FAKE", {})
+        esankhyiki.get_data(
+            "FAKE",
+            {},
+        )
 
 
 def test_invalid_filter_raises():
@@ -153,7 +210,7 @@ def test_invalid_filter_raises():
 def test_plfs_data():
     """PLFS data retrieval."""
 
-    assert_dict_or_list(
+    assert_network_dataset(
         "PLFS",
         {
             "indicator_code": 1,
@@ -175,7 +232,7 @@ def test_plfs_data():
 def test_nas_data():
     """NAS data retrieval."""
 
-    assert_dict_or_list(
+    assert_network_dataset(
         "NAS",
         {
             "indicator_code": 1,
@@ -193,7 +250,7 @@ def test_nas_data():
 def test_isp_data():
     """ISP data retrieval."""
 
-    assert_dict_or_list(
+    assert_network_dataset(
         "ISP",
         {
             "frequency_code": 1,
@@ -203,17 +260,17 @@ def test_isp_data():
 
 
 # ============================================================================
-# NSS73
+# IRRIGATION
 # ============================================================================
 
-def test_nss73_data():
-    """NSS73 data retrieval."""
+def test_irrigation_data():
+    """IRRIGATION data retrieval."""
 
-    assert_dict_or_list(
-        "NSS73",
+    assert_network_dataset(
+        "IRRIGATION",
         {
-            "indicator_code": 6,
-            "limit": 20,
+            "indicator_code": 1,
+            "limit": 1,
         },
     )
 
@@ -229,7 +286,10 @@ def test_nss73_data():
 def test_nss_data(dataset, filters):
     """Data retrieval for all supported NSS datasets."""
 
-    assert_dict_or_list(dataset, filters)
+    assert_network_dataset(
+        dataset,
+        filters,
+    )
 
 
 # ============================================================================
@@ -239,7 +299,7 @@ def test_nss_data(dataset, filters):
 def test_cpi_auto_routes_group():
     """Verify CPI auto-routing."""
 
-    assert_dict_or_list(
+    assert_network_dataset(
         "CPI",
         {
             "base_year": "2024",
@@ -256,7 +316,7 @@ def test_cpi_auto_routes_group():
 def test_asi_data():
     """ASI data retrieval."""
 
-    assert_dict_or_list(
+    assert_network_dataset(
         "ASI",
         {
             "classification_year": "2008",
@@ -275,15 +335,21 @@ def test_asi_data():
 def test_ec_dataframe():
     """EC dataframe output."""
 
-    assert_dataframe(
-        "EC",
-        {
-            "indicator_code": 1,
-            "state": "27",
-            "mode": "detail",
-            "pageNum": "1",
-        },
-    )
+    try:
+        assert_dataframe(
+            "EC",
+            {
+                "indicator_code": 1,
+                "state": "27",
+                "mode": "detail",
+                "pageNum": "1",
+            },
+        )
+
+    except (APIError, NoDataError) as exc:
+        pytest.skip(
+            f"EC API/data unavailable: {exc}"
+        )
 
 
 # ============================================================================

@@ -119,21 +119,33 @@ def list_datasets(format: str = "dict"):
 def get_indicators(
     dataset: str,
     format: str = "dict",
+    account_code: int = 1,
 ):
     """
     Returns available indicators for a given dataset.
 
-    Step 2 of: list_datasets -> get_indicators -> get_metadata -> get_data
+    Step 2 of:
+        list_datasets -> get_indicators -> get_metadata -> get_data
 
     Args:
-        dataset: Dataset name (PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY, AISHE,
-                 ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS73, NSS75, NSS75E, NSS76, NSS76C,
-                 NSS77, NSS78, CPIALRL, HCES, TUS, EC, NSS79, NSS80, UDISE, MNRE, ISP).
-        format: Output format -"dict" (default), "df"/"dataframe", or "csv".
+        dataset:
+            Dataset name (PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY, AISHE,
+            ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS73, NSS75, NSS75E,
+            NSS76, NSS76C, NSS77, NSS78, CPIALRL, HCES, TUS, EC, NSS79,
+            NSS80, NSS80C, UDISE, MNRE, ISP, IRRIGATION, NSS71, NSS71E,
+            NSS72, NSS72T, NSS74).
+
+        format:
+            Output format - "dict" (default), "df"/"dataframe", or "csv".
+
+        account_code:
+            NAS account code. Supported values are 1 or 2.
+            This parameter is used only for the NAS dataset.
 
     Returns:
         dict, pandas DataFrame, or CSV string.
     """
+
     dataset = resolve_dataset_name(dataset)
 
     indicator_methods = {
@@ -167,19 +179,32 @@ def get_indicators(
         "IIP": _client.get_iip_indicators,
         "WPI": _client.get_wpi_indicators,
         "ASI": _client.get_asi_indicators,
+        "IRRIGATION": _client.get_irrigation_indicators,
+        "NSS71": _client.get_nss71_indicators,
+        "NSS71E": _client.get_nss71e_indicators,
+        "NSS72": _client.get_nss72_indicators,
+        "NSS72T": _client.get_nss72t_indicators,
+        "NSS74": _client.get_nss74_indicators,
     }
 
     indicator_method = indicator_methods.get(dataset)
+
     if indicator_method is None:
         raise APIError(
-            f"{dataset} does not expose an indicator-list endpoint in its Swagger specification.",
+            f"{dataset} does not expose an indicator-list endpoint "
+            "in its Swagger specification.",
             dataset=dataset,
         )
 
-    result = indicator_method()
-    result = enrich_indicators(result, dataset)
-    return format_response(result, format)
+    # NAS requires account_code
+    if dataset == "NAS":
+        result = indicator_method(account_code=account_code)
+    else:
+        result = indicator_method()
 
+    result = enrich_indicators(result, dataset)
+
+    return format_response(result, format)
 
 # =========================================================================
 # Step 3: get_metadata
@@ -194,6 +219,7 @@ def get_metadata(
     classification_year=None,
     frequency_code=None,
     series=None,
+    account_code=None,
     use_of_energy_balance_code=None,
     sub_indicator_code=None,
     year_type_code=None,
@@ -213,6 +239,7 @@ def get_metadata(
         classification_year: Required for ASI.
         frequency_code: Required for PLFS and ASUSE.
         series: For CPI and NAS ("Current"/"Back").
+        account_code: For NAS (1 or 2).
         use_of_energy_balance_code: For ENERGY (1=Supply, 2=Consumption).
         sub_indicator_code: For RBI (alternative to indicator_code).
         format: Output format -"dict" (default), "df"/"dataframe", or "csv".
@@ -224,6 +251,7 @@ def get_metadata(
 
     indicator_code = _coerce_int_or_raise(indicator_code, "indicator_code")
     frequency_code = _coerce_int_or_raise(frequency_code, "frequency_code")
+    account_code = _coerce_int_or_raise(account_code, "account_code")
     use_of_energy_balance_code = _coerce_int_or_raise(
         use_of_energy_balance_code, "use_of_energy_balance_code"
     )
@@ -238,6 +266,7 @@ def get_metadata(
         "frequency": frequency,
         "classification_year": classification_year,
         "series": series,
+        "account_code": account_code,
         "use_of_energy_balance_code": use_of_energy_balance_code,
         "sub_indicator_code": sub_indicator_code,
         "year_type_code": year_type_code,
@@ -287,11 +316,22 @@ def get_metadata(
 
         elif dataset == "NAS":
             result = _client.get_nas_filters(
-                series=series or "Current", frequency_code=frequency_code or 1,
-                indicator_code=indicator_code, base_year=base_year or "2022-23",
+                series=series or "Current",
+                frequency_code=frequency_code or 1,
+                indicator_code=indicator_code,
+                base_year=base_year or "2022-23",
+                account_code=account_code or 1,
             )
+
             result["api_params"] = get_swagger_param_definitions("NAS")
-            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code, base_year=base_year)
+
+            result = _check_empty_metadata(
+                result,
+                dataset,
+                indicator_code=indicator_code,
+                base_year=base_year,
+                
+            )
 
         elif dataset == "ENERGY":
             result = _client.get_energy_filters(
@@ -409,11 +449,42 @@ def get_metadata(
         elif dataset == "MNRE":
             result = _client.get_mnre_filters(type_of_renewable_energy_code=indicator_code)
             result["api_params"] = get_swagger_param_definitions("MNRE")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
 
         elif dataset == "ISP":
             result = _client.get_isp_filters(frequency_code=frequency_code or 1)
             result["api_params"] = get_swagger_param_definitions("ISP")
             result = _check_empty_metadata(result, dataset, frequency_code=frequency_code or 1)
+
+        elif dataset == "IRRIGATION":
+            result = _client.get_irrigation_filters(indicator_code=indicator_code)
+            result["api_params"] = get_swagger_param_definitions("IRRIGATION")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS71":
+            result = _client.get_nss71_filters(indicator_code=indicator_code)
+            result["api_params"] = get_swagger_param_definitions("NSS71")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS71E":
+            result = _client.get_nss71e_filters(indicator_code=indicator_code)
+            result["api_params"] = get_swagger_param_definitions("NSS71E")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS72":
+            result = _client.get_nss72_filters(indicator_code=indicator_code)
+            result["api_params"] = get_swagger_param_definitions("NSS72")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS72T":
+            result = _client.get_nss72t_filters(indicator_code=indicator_code)
+            result["api_params"] = get_swagger_param_definitions("NSS72T")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+
+        elif dataset == "NSS74":
+            result = _client.get_nss74_filters(indicator_code=indicator_code)
+            result["api_params"] = get_swagger_param_definitions("NSS74")
+            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
 
         else:
             raise InvalidDatasetError(dataset, VALID_DATASETS)
@@ -442,7 +513,7 @@ def get_data(dataset: str, filters: Dict[str, Any], format: str = "dict"):
     Args:
         dataset: Dataset name (PLFS, CPI, IIP, ASI, NAS, WPI, ENERGY, AISHE,
                  ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS73, NSS75, NSS75E, NSS76, NSS76C,
-                 NSS77, NSS78, CPIALRL, HCES, TUS, EC, NSS79, NSS80, UDISE, MNRE, ISP).
+                 NSS77, NSS78, CPIALRL, HCES, TUS, EC, NSS79, NSS80, NSS80C, UDISE, MNRE, ISP, IRRIGATION).
         filters: Key-value pairs from get_metadata filter_values.
         format: Output format -"dict" (default), "df"/"dataframe", or "csv".
 

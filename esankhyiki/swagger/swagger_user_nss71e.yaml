@@ -1,0 +1,142 @@
+openapi: 3.0.1
+info:
+  title: "All India Survey on Social Consumption: Education in India"
+  version: 1.0.0
+servers:
+- url:   https://api.mospi.gov.in/
+tags:
+- name: NSS71
+  description: ( National Sample Survey 71.)
+paths:
+  /api/nss-71/getNss71Records:
+    get:
+      tags:
+      - NSS71
+      operationId: NSS71IndicatorValues.
+      # summary: Get  data for an indicator
+      description: |
+        - **Required:** `survey_code`, `indicator_code`  
+        - **Filters (optional):** state_code, sector_code, gender_code, age_group_code, religion_code, attendance_status_code, attendance_type_code, education_type_code, level_of_attendance_code, level_of_education_code, completed_level_of_education_code,
+        distance_code, item_of_expenditure_code, nature_of_institution_code, proportion_in_the_population_of_age_code
+
+      parameters:  
+        - in: query
+          name: survey_code
+          required: true
+          schema: { type: integer, enum: [1] }
+          # default: 2  
+        - in: query
+          name: indicator_code
+          required: true
+          schema: { type: integer }
+          description: Enter The Indicator code (1 - 12)
+        - in: query
+          name: state_code
+          schema: { type: integer }  
+          description: Enter The State / UT (1-37)
+        - in: query
+          name: sector_code
+          schema: { type: integer }
+          description: Enter The Sector code (1-4) 
+        - in: query
+          name: gender_code
+          schema: { type: integer }
+          description: Enter The Gender code (1-5) 
+        - in: query
+          name: age_group_code
+          schema: { type: integer }
+          description: Enter The Age Group code (1-40)
+        - in: query
+          name: religion_code
+          schema: { type: integer }
+          description: Enter The Religion code (1-9)
+        - in: query
+          name: attendance_status_code
+          schema: { type: integer }
+          description: Enter The Attendance Status code (1-3)
+        - in: query
+          name: attendance_type_code
+          schema: { type: integer }
+          description: Enter The Attendance Type code (1-10)
+        - in: query
+          name: education_type_code
+          schema: { type: integer }
+          description: Enter The Education Type code (1-4)
+        - in: query
+          name: level_of_attendance_code
+          schema: { type: integer }
+          description: Enter The Level of Attendance code (1-11)
+        - in: query
+          name: level_of_education_code
+          schema: { type: integer }
+          description: Enter The Level of Education code (1-6)
+        - in: query
+          name: completed_level_of_education_code
+          schema: { type: integer }
+          description: Enter The Completed Level of Education code (1-12)
+        - in: query
+          name: distance_code
+          schema: { type: integer }
+          description: Enter The Distance code (1-6)  
+        - in: query
+          name: item_of_expenditure_code
+          schema: { type: integer }
+          description: Enter The Item Of Expenditure code (1-6)
+        - in: query
+          name: nature_of_institution_code
+          schema: { type: integer }
+          description: Enter The Nature Of Institution code (1-3)  
+        - in: query
+          name: proportion_in_the_population_of_age_code
+          schema: { type: integer }
+          description: Enter The Proportion In The Population Of Age code (1-3)  
+          
+        - in: query
+          name: limit
+          schema: { type: integer, default: 20 }
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: format
+          schema:
+            type: string
+          description: Set to `xlsx` to download as excel
+
+      responses:
+        "200":
+          description: A JSON array of user information
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+            text/csv:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+      security:
+      - bearerAuth: []
+ 
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      description: Bearer token to access these api endpoints
+      name: Authorization
+      in: header
+x-original-swagger-version: "2.0"

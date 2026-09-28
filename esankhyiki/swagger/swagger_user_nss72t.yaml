@@ -1,0 +1,247 @@
+openapi: 3.0.1
+
+info:
+  title: API for NSS-72 Tourism (Domestic Tourism in India)
+  version: 1.0.0
+
+servers:
+  - url: https://api.mospi.gov.in
+
+tags:
+  - name: NSS72t
+    description: (Domestic Tourism in India - NSS 72nd Round)
+
+paths:
+  /api/nss-72t/getNss72TourismRecords:
+    get:
+      tags:
+        - NSS72t
+
+      summary: Get NSS-72t Tourism Records
+
+      description: |
+        * Required: `indicator_code`
+        * Filters (optional): state_code, sector_code, gender_code, religion_code, social_group_code, household_of_type_code, quintile_class_of_umpce_code, leading_purpose_code, number_of_members_code, month_code, visitors_purpose_code, age_group_code, education_level_code, activity_statuses_code, avg_no_of_nights_spent_code, major_mode_of_travel_code, major_type_of_stay_code, trip_type_code, main_destination_code, category_of_expenditure_code, sub_category_code, sub_sub_category_code
+
+      parameters:
+        - in: query
+          name: indicator_code
+          required: true
+          description: Enter The Indicator code (1 - 35)
+          schema:
+            type: integer
+
+        - in: query
+          name: state_code
+          required: false
+          description: Enter The State / UT code (1 - 38)
+          schema:
+            type: integer
+
+        - in: query
+          name: sector_code
+          required: false
+          description: Enter The Sector code (1-3)
+          schema:
+            type: integer
+
+        - in: query
+          name: gender_code
+          required: false
+          description: Enter The Gender code (1-4)
+          schema:
+            type: integer
+
+        - in: query
+          name: religion_code
+          required: false
+          description: Enter The Religion code (1-6)
+          schema:
+            type: integer
+
+        - in: query
+          name: social_group_code
+          required: false
+          description: Enter The Social Group code (1-5)
+          schema:
+            type: integer
+
+        - in: query
+          name: household_type_code
+          required: false
+          description: Enter The Household code (1-9)
+          schema:
+            type: integer
+
+        - in: query
+          name: quintile_class_of_umpce_code
+          required: false
+          description: Enter The Quintile Class of UMPCE code (1-6)
+          schema:
+            type: integer
+
+        - in: query
+          name: leading_purpose_code
+          required: false
+          description: Enter The Leading Purpose code (1-10)
+          schema:
+            type: integer
+
+        - in: query
+          name: number_of_members_code
+          required: false
+          description: Enter The Number of Members code (1-5)
+          schema:
+            type: integer
+
+        - in: query
+          name: month_code
+          required: false
+          description: Enter The Month code (1-13)
+          schema:
+            type: integer
+
+        - in: query
+          name: visitors_purpose_code
+          required: false
+          description: Enter The Visitors Purpose code (1-9)
+          schema:
+            type: integer
+
+        - in: query
+          name: age_group_code
+          required: false
+          description: Enter The Age Group code (1 - 5)
+          schema:
+            type: integer
+
+        - in: query
+          name: education_level_code
+          required: false
+          description: Enter The Education Level code (1 - 8)
+          schema:
+            type: integer
+
+        - in: query
+          name: activity_statuses_code
+          required: false
+          description: Enter The Activity Statuses code (1-3)
+          schema:
+            type: integer
+
+        - in: query
+          name: avg_no_of_nights_spent_code
+          required: false
+          description: Enter The Average Number of Nights Spent code (1 - 7)
+          schema:
+            type: integer
+
+        - in: query
+          name: major_mode_travel_code (1-11)
+          required: false
+          description: Enter The Major Mode of Travel code
+          schema:
+            type: integer
+
+        - in: query
+          name: major_type_of_stay_code
+          required: false
+          description: Enter The Major Type of Stay code (1-7)
+          schema:
+            type: integer
+
+        - in: query
+          name: trip_type_code
+          required: false
+          description: Enter The Trip Type code (1-3)
+          schema:
+            type: integer
+
+        - in: query
+          name: main_destination_code
+          required: false
+          description: Enter The Main Destination code (1-5)
+          schema:
+            type: integer
+
+        - in: query
+          name: category_of_expenditure_code
+          required: false
+          description: Enter The Category of Expenditure code (1 - 2)
+          schema:
+            type: integer
+
+        - in: query
+          name: sub_category_code
+          required: false
+          description: Enter The Sub Category code (1-8)
+          schema:
+            type: integer
+
+        - in: query
+          name: sub_sub_category_code
+          required: false
+          description: Enter The Sub Sub Category code (1-20)
+          schema:
+            type: integer
+
+        - in: query
+          name: limit
+          required: false
+          description: Number of records per page
+          schema:
+            type: integer
+            minimum: 20
+            maximum: 100
+            default: 20
+
+        - in: query
+          name: page
+          required: false
+          description: Page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+
+        - in: query
+          name: viz_req
+          required: false
+          description: Set to true to get the full filtered dataset in one response (no pagination), for chart rendering
+          schema:
+            type: boolean
+            default: false
+
+      responses:
+        "200":
+          description: A JSON array of NSS-72 Tourism records
+          content:
+            application/json:
+              schema:
+                type: object
+
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                error: Invalid indicator_code
+                statusCode: false
+
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Bearer token to access the API

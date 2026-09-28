@@ -1,0 +1,144 @@
+openapi: 3.0.1
+
+info:
+  title: API for NSS-72 HESDG (Household Expenditure on Services and Durable Goods)
+  version: 1.0.0
+
+servers:
+  - url: https://api.mospi.gov.in
+
+tags:
+  - name: NSS72
+    description: ( Household Expenditure on Services and Durable Goods - NSS 72nd Round )
+
+paths:
+  /api/nss-72/getNss72HesdgRecords:
+    get:
+      tags:
+        - NSS72
+
+      summary: Get NSS-72 HESDG Records
+
+      description: |
+        * Required: `indicator_code`
+        * Filters (optional): state_ut_code, sector_code, mode_of_transport_code, quintile_class_code, services_code, expenditure_component_code, durable_goods_group_code, main_use_code, average_mpce_of_households_code, type_of_households_code
+
+      parameters:
+        - in: query
+          name: indicator_code
+          required: true
+          description: Enter The Indicator code (1 - 11)
+          schema:
+            type: integer
+
+        - in: query
+          name: state_ut_code
+          description: Enter The State / UT code (99 = All India)
+          schema:
+            type: integer
+
+        - in: query
+          name: sector_code
+          description: Enter The Sector code (1-3)
+          schema:
+            type: integer
+
+        - in: query
+          name: mode_of_transport_code
+          description: Enter The Mode Of Transport code (1-10)
+          schema:
+            type: integer
+
+        - in: query
+          name: quintile_class_code
+          description: Enter The Quintile Class code (1-6)
+          schema:
+            type: integer
+
+        - in: query
+          name: services_code
+          description: Enter The Services code (1-19)
+          schema:
+            type: integer
+
+        - in: query
+          name: expenditure_component_code
+          description: Enter The Expenditure Component code (1-3)
+          schema:
+            type: integer
+
+        - in: query
+          name: durable_goods_group_code
+          description: Enter The Durable Goods Group code (1-14)
+          schema:
+            type: integer
+
+        - in: query
+          name: main_use_code
+          description: Enter The Main Use code (1-3)
+          schema:
+            type: integer
+
+        - in: query
+          name: average_mpce_of_households_code
+          description: Enter The Average MPCE Of Households code (1-3)
+          schema:
+            type: integer
+
+        - in: query
+          name: type_of_households_code
+          description: Enter The Type Of Households code (1-7)
+          schema:
+            type: integer
+
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 20
+            maximum: 100
+            default: 20
+
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+
+        - in: query
+          name: viz_req
+          description: Set to `true` to get the full filtered dataset in one response (no pagination), for chart rendering
+          schema:
+            type: boolean
+            default: false
+
+      responses:
+        "200":
+          description: A JSON array of user information
+
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                  error:
+                    type: string
+              example:
+                error: Invalid indicator_code
+                statusCode: false
+
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Bearer token to access the API

@@ -3,25 +3,23 @@
 import esankhyiki
 
 CORE_DATASETS = [
-    "PLFS", "CPI", "IIP", "ASI", "NAS", "WPI", "ENERGY",
-    "AISHE", "ASUSE", "GENDER", "NFHS", "ENVSTATS", "RBI",
-    "NSS73", "NSS75", "NSS75E", "NSS76", "NSS76C", "NSS77", "NSS78", "CPIALRL",
-    "HCES", "TUS", "EC", "NSS80","NSS80C", "MNRE",
-    "ISP",
+    "PLFS", "CPI", "IIP", "ASI", "NAS", "WPI", "ENERGY", "AISHE", "ASUSE",
+    "GENDER", "NFHS", "ENVSTATS", "RBI", "NSS77", "NSS78", "CPIALRL", "HCES",
+    "TUS", "EC", "NSS73", "NSS75", "NSS75E", "NSS76", "NSS76C", "NSS79",
+    "NSS80", "NSS80C", "UDISE", "MNRE", "ISP", "IRRIGATION", "NSS71",
+    "NSS71E", "NSS72", "NSS72T", "NSS74"
 ]
 
-OPTIONAL_DATASETS = [
-    "NSS79", "UDISE",
-]
-
-ALL_EXPECTED_DATASETS = CORE_DATASETS + OPTIONAL_DATASETS
+ALL_EXPECTED_DATASETS = CORE_DATASETS
 
 
 def test_list_datasets_returns_all():
     result = esankhyiki.list_datasets()
     assert "datasets" in result
-    assert len(CORE_DATASETS) <= len(result["datasets"]) <= len(ALL_EXPECTED_DATASETS)
-    assert set(result["datasets"]).issubset(set(ALL_EXPECTED_DATASETS))
+    # The number of datasets should be exactly what we expect.
+    assert len(result["datasets"]) == len(ALL_EXPECTED_DATASETS)
+    # The returned set should be identical to our expected set.
+    assert set(result["datasets"]) == set(ALL_EXPECTED_DATASETS)
 
 
 def test_list_datasets_has_all_datasets():

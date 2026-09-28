@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2026-09-28
+
+### Added
+
+- Added support for 6 new MoSPI datasets:
+  - NSS71 Health in India (NSS 71st Round)
+  - NSS71E Education in India (NSS 71st Round)
+  - NSS72 (72nd Round: Household Expenditure on Services and Durable Goods)
+  - NSS72T (72nd Round: Domestic Tourism in India)
+  - NSS74 (74th Round: Services Sector Enterprises)
+- Added indicator, metadata, and data retrieval support for all newly introduced datasets.
+- Added Swagger-based parameter validation for the new datasets.
+- Total supported datasets: 36.
+
+### Changed
+
+- Updated NAS support to accept `account_code` (1 or 2) when retrieving indicators and metadata.
+- Updated the NAS Swagger specification to include `account_code` and current base-year and series options.
+
 ## [0.1.4] - 2026-07-31
 
 ### Added

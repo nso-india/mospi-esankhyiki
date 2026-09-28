@@ -34,11 +34,13 @@ class _LegacySSLAdapter(HTTPAdapter):
         kwargs["ssl_context"] = ctx
         return super().init_poolmanager(*args, **kwargs)
 
+# str = "http://10.24.89.9:5000" UAT
+# str = "https://api.mospi.gov.in" PROD
 
 class MoSPI:
     """Unified client for all MoSPI dataset APIs."""
 
-    def __init__(self, base_url: str = "https://api.mospi.gov.in"):
+    def __init__(self, base_url: str = "http://10.24.89.9:5000"):
         self.base_url = base_url
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": "Mozilla/5.0"})
@@ -88,6 +90,12 @@ class MoSPI:
             "UDISE": "/api/udise/getUdiseRecords",
             "MNRE": "/api/mnre/getDataByEnergy",
             "ISP": "/api/isp/getISPRecords",
+            "IRRIGATION": "/api/irrigation/getIrrigationData",
+            "NSS71": "/api/nss-71/getNss71Records",
+            "NSS71E": "/api/nss-71/getNss71Records",
+            "NSS72": "/api/nss-72/getNss72HesdgRecords",
+            "NSS72T": "/api/nss-72t/getNss72TourismRecords",
+            "NSS74": "/api/nss-74/getNss74Records",
         }
 
     def get_data(self, dataset_name: str, params: Optional[Dict] = None) -> Dict[str, Any]:
@@ -243,28 +251,87 @@ class MoSPI:
     # NAS
     # =========================================================================
 
-    def get_nas_indicators(self) -> Dict[str, Any]:
-        try:
-            response = self.session.get(f"{self.base_url}/api/nas/getNasIndicatorList", timeout=30)
-            response.raise_for_status()
-            return response.json()
-        except requests.RequestException as e:
-            return {"error": str(e), "statusCode": False}
+    # def get_nas_indicators(self) -> Dict[str, Any]:
+    #     try:
+    #         response = self.session.get(f"{self.base_url}/api/nas/getNasIndicatorList", timeout=30)
+    #         response.raise_for_status()
+    #         return response.json()
+    #     except requests.RequestException as e:
+    #         return {"error": str(e), "statusCode": False}
 
-    def get_nas_filters(self, series: str = "Current", frequency_code: int = 1,
-                        indicator_code: int = 1, base_year: str = "2022-23") -> Dict[str, Any]:
-        params = {
-            "base_year": base_year, "series": series,
-            "frequency_code": frequency_code, "indicator_code": indicator_code,
-        }
+
+    def get_nas_indicators(self, account_code: int = 1) -> Dict[str, Any]:
+        """Get NAS indicators for account_code 1 or 2."""
+
+        if account_code not in (1, 2):
+            return {
+                "error": "Invalid account_code. Expected 1 or 2.",
+                "statusCode": False,
+            }
+
         try:
             response = self.session.get(
-                f"{self.base_url}/api/nas/getNasFilterByIndicatorId", params=params, timeout=30,
+                f"{self.base_url}/api/nas/getNasIndicatorList",
+                params={"account_code": account_code},
+                timeout=30,
             )
             response.raise_for_status()
             return response.json()
+
         except requests.RequestException as e:
             return {"error": str(e), "statusCode": False}
+
+
+    # def get_nas_filters(self, series: str = "Current", frequency_code: int = 1,
+    #                     indicator_code: int = 1, base_year: str = "2022-23",
+    #                     account_code: int = 1) -> Dict[str, Any]:
+    #     params = {
+    #         "base_year": base_year, "series": series,
+    #         "frequency_code": frequency_code, "indicator_code": indicator_code,
+    #         "account_code": account_code,
+    #     }
+    #     try:
+    #         response = self.session.get(
+    #             f"{self.base_url}/api/nas/getNasFilterByIndicatorId", params=params, timeout=30,
+    #         )
+    #         response.raise_for_status()
+    #         return response.json()
+    #     except requests.RequestException as e:
+    #         return {"error": str(e), "statusCode": False}
+
+    def get_nas_filters(self,series: str = "Current",frequency_code: int = 1,
+                        indicator_code: int = 1,base_year: str = "2022-23",account_code: int = 1,) -> Dict[str, Any]:
+        """Get NAS filters for the selected indicator and account."""
+        if account_code not in (1, 2):
+            return {
+                "error": "Invalid account_code. Expected 1 or 2.",
+                "statusCode": False,
+            }
+
+        params = {
+            "base_year": base_year,
+            "series": series,
+            "frequency_code": frequency_code,
+            "indicator_code": indicator_code,
+            "account_code": account_code,
+        }
+
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nas/getNasFilterByIndicatorId",
+                params=params,
+                timeout=30,
+            )
+
+            response.raise_for_status()
+
+            return response.json()
+
+        except requests.RequestException as e:
+            return {
+                "error": str(e),
+                "statusCode": False,
+            }
 
     # =========================================================================
     # WPI
@@ -846,6 +913,180 @@ class MoSPI:
         except requests.RequestException as e:
             return {"error": str(e), "statusCode": False}
 
+
+
+    # =========================================================================
+    # IRRIGATION
+    # =========================================================================
+
+    def get_irrigation_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/irrigation/getIrrigationIndicatorList", timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_irrigation_filters(self, indicator_code: int = None) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/irrigation/getIrrigationFilters", params=params, timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+
+    # =========================================================================
+    # NSS71
+    # =========================================================================
+
+    def get_nss71_indicators(self, survey_code: int = 2) -> Dict[str, Any]:
+        try:
+            # Pass query parameters securely using the 'params' argument
+            params = {"survey_code": survey_code}
+            response = self.session.get(
+                f"{self.base_url}/api/nss-71/getIndicatorList", 
+                params=params, 
+                timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss71_filters(self, indicator_code: int = None) -> Dict[str, Any]:
+            params = {"indicator_code": indicator_code}
+            try:
+                response = self.session.get(
+                    f"{self.base_url}/api/nss-71/getNss71FilterByIndicatorId", 
+                    params=params, 
+                    timeout=30
+                )
+                response.raise_for_status()
+                return response.json()
+            except requests.RequestException as e:
+                return {"error": str(e), "statusCode": False}
+
+
+    # =========================================================================
+    # NSS71E
+    # =========================================================================
+
+    def get_nss71e_indicators(self, survey_code: int = 1) -> Dict[str, Any]:
+        try:
+            # Pass query parameters securely using the 'params' argument
+            params = {"survey_code": survey_code}
+            response = self.session.get(
+                f"{self.base_url}/api/nss-71/getIndicatorList", 
+                params=params, 
+                timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss71e_filters(self, indicator_code: int = None) -> Dict[str, Any]:
+            params = {"indicator_code": indicator_code}
+            try:
+                response = self.session.get(
+                    f"{self.base_url}/api/nss-71/getNss71FilterByIndicatorId", 
+                    params=params, 
+                    timeout=30
+                )
+                response.raise_for_status()
+                return response.json()
+            except requests.RequestException as e:
+                return {"error": str(e), "statusCode": False}
+
+
+    # =========================================================================
+    # NSS72
+    # =========================================================================
+
+    def get_nss72_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-72/getNss72HesdgIndicatorList", timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss72_filters(self, indicator_code: int = None) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-72/getNss72HesdgFiltersByIndicatorCode", params=params, timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+
+
+
+    # =========================================================================
+    # NSS72T
+    # =========================================================================
+
+    def get_nss72t_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-72t/getNss72TourismIndicatorList", timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss72t_filters(self, indicator_code: int = None) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-72t/getNss72TourismFilterByIndicatorId", params=params, timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+
+
+    # =========================================================================
+    # NSS74
+    # =========================================================================
+
+    def get_nss74_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-74/getIndicatorList", timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_nss74_filters(self, indicator_code: int) -> Dict[str, Any]:
+        params = {"indicator_code": indicator_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/nss-74/getNss74FilterByIndicatorId",
+                params=params,
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+        
     # =========================================================================
     # EC (Economic Census) - POST to esankhyiki.mospi.gov.in
     # =========================================================================

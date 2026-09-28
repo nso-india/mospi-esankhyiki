@@ -12,8 +12,9 @@ SWAGGER_DIR = os.path.join(os.path.dirname(__file__), "swagger")
 VALID_DATASETS = [
     "PLFS", "CPI", "IIP", "ASI", "NAS", "WPI", "ENERGY",
     "AISHE", "ASUSE", "GENDER", "NFHS", "ENVSTATS", "RBI",
-    "NSS77", "NSS78", "CPIALRL", "HCES", "TUS", "EC",
-    "NSS73", "NSS75", "NSS75E", "NSS76", "NSS76C", "NSS79", "NSS80", "NSS80C","UDISE", "MNRE", "ISP",
+    "CPIALRL", "HCES", "TUS", "EC","UDISE", "MNRE", "ISP",
+    "NSS71", "NSS71E", "NSS72", "NSS72T", "NSS73", "NSS74", "NSS75", "NSS75E", "NSS76", "NSS76C", "NSS77", "NSS78", "NSS79", "NSS80", "NSS80C",
+    # "IRRIGATION", 
 ]
 
 DATASET_SWAGGER = {
@@ -51,6 +52,12 @@ DATASET_SWAGGER = {
     "UDISE": ("swagger_user_udise.yaml", "/api/udise/getUdiseRecords"),
     "MNRE": ("swagger_user_mnre.yaml", "/api/mnre/getDataByEnergy"),
     "ISP": ("swagger_user_isp.yaml", "/api/isp/getISPRecords"),
+    "IRRIGATION": ("swagger_user_irrigation.yaml", "/api/irrigation/getIrrigationData"),
+    "NSS71": ("swagger_user_nss71.yaml", "/api/nss-71/getNss71Records"),
+    "NSS71E": ("swagger_user_nss71e.yaml", "/api/nss-71/getNss71Records"),
+    "NSS72": ("swagger_user_nss72h.yaml", "/api/nss-72/getNss72HesdgRecords"),
+    "NSS72T": ("swagger_user_nss72t.yaml", "/api/nss-72t/getNss72TourismRecords"),
+    "NSS74": ("swagger_user_nss74.yaml", "/api/nss-74/getNSS74Records")
 }
 
 # Dataset name -> API key mapping for get_data routing
@@ -86,6 +93,12 @@ DATASET_API_MAP = {
     "UDISE": "UDISE",
     "MNRE": "MNRE",
     "ISP": "ISP",
+    "IRRIGATION": "IRRIGATION",
+    "NSS71": "NSS71",
+    "NSS71E": "NSS71E", 
+    "NSS72": "NSS72",
+    "NSS72T": "NSS72T",
+    "NSS74": "NSS74"
 }
 
 

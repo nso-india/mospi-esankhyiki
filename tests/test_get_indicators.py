@@ -41,6 +41,11 @@ SIMPLE_DATASETS = [
     "NSS79",
     "NSS80",
     "NSS80C",
+    "IRRIGATION",
+    "NSS71",
+    "NSS71E",
+    "NSS72",
+    "NSS72T",
     "MNRE",
 ]
 
