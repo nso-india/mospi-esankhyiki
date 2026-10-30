@@ -1,0 +1,83 @@
+openapi: 3.0.1
+
+info:
+  title: API for Service Producer Price Index (SPPI)
+  version: 1.0.0
+
+servers:
+  - url: http://10.24.89.9:5000
+
+tags:
+  - name: SPPI
+    description: Service Producer Price Index
+
+paths:
+  /api/sppi/get-records:
+    get:
+      tags:
+        - SPPI
+      summary: Get SPPI Records
+      description: |
+        * Required: `sppi_code`
+        * Filters (optional): financial_year_code, quarter_code
+      parameters:
+        - in: query
+          name: sppi_code
+          required: true
+          description: Enter The Service Producer Price Index code (1-10)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+        - in: query
+          name: financial_year_code
+          required: false
+          description: Enter The Financial Year code (1-4)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 4
+        - in: query
+          name: quarter_code
+          required: false
+          description: Enter The Quarter code (1-4)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 4
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: viz_req
+          description: Set to `true` to get the full filtered dataset in one response (no pagination), for chart rendering
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Successful response
+
+        "400":
+          description: Invalid parameters
+
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Bearer token to access the API

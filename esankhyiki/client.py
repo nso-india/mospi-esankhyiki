@@ -96,6 +96,9 @@ class MoSPI:
             "NSS72": "/api/nss-72/getNss72HesdgRecords",
             "NSS72T": "/api/nss-72t/getNss72TourismRecords",
             "NSS74": "/api/nss-74/getNss74Records",
+            "SPPI": "/api/sppi/get-records",
+            "OPPI": "/api/oppi/getOppiRecords",
+            "IPPI": "/api/ippi/getIPPIRecords",
         }
 
     def get_data(self, dataset_name: str, params: Optional[Dict] = None) -> Dict[str, Any]:
@@ -1086,6 +1089,117 @@ class MoSPI:
             return response.json()
         except requests.RequestException as e:
             return {"error": str(e), "statusCode": False}
+
+
+
+
+
+    # =========================================================================
+    # SPPI
+    # =========================================================================
+
+    def get_sppi_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/sppi/get-sppi-list", timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_sppi_filters(self, sppi_code: int = None) -> Dict[str, Any]:
+        params = {"sppi_code": sppi_code}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/sppi/get-filters", params=params, timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+
+
+
+    # =========================================================================
+    # OPPI
+    # =========================================================================
+
+    def get_oppi_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/oppi/getOppiBaseYear", timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+    def get_oppi_filters(self, base_year: str = None) -> Dict[str, Any]:
+        params = {"base_year": base_year}
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/oppi/getOppiFilter",
+                params=params,
+                timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {
+                "error": str(e),
+                "statusCode": False
+            }
+
+
+
+
+
+    # =========================================================================
+    # IPPI
+    # =========================================================================
+
+    def get_ippi_indicators(self) -> Dict[str, Any]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/ippi/getIPPIIndicators", timeout=30
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e), "statusCode": False}
+
+
+    def get_ippi_filters(self) -> list[dict[str, Any]]:
+        try:
+            response = self.session.get(
+                f"{self.base_url}/api/ippi/getIPPIFilter",
+                timeout=30
+            )
+
+            response.raise_for_status()
+            return response.json()
+
+        except requests.RequestException as e:
+            return {
+                "error": str(e),
+                "statusCode": False
+            }
+
+    # def get_ippi_filters(self, industry_group_code: int = None) -> Dict[str, Any]:
+    #     params = {"industry_group_code": industry_group_code}
+    #     try:
+    #         response = self.session.get(
+    #             f"{self.base_url}/api/ippi/getIPPIFilter", params=params, timeout=30
+    #         )
+    #         response.raise_for_status()
+    #         return response.json()
+    #     except requests.RequestException as e:
+    #         return {"error": str(e), "statusCode": False}
+
+
+        
         
     # =========================================================================
     # EC (Economic Census) - POST to esankhyiki.mospi.gov.in

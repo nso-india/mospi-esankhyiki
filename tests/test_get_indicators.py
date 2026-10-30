@@ -47,6 +47,9 @@ SIMPLE_DATASETS = [
     "NSS72",
     "NSS72T",
     "MNRE",
+    "SPPI",
+    "OPPI",
+    "IPPI",
 ]
 
 STANDARD_DATASETS = [

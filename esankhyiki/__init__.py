@@ -133,7 +133,7 @@ def get_indicators(
             ASUSE, GENDER, NFHS, ENVSTATS, RBI, NSS73, NSS75, NSS75E,
             NSS76, NSS76C, NSS77, NSS78, CPIALRL, HCES, TUS, EC, NSS79,
             NSS80, NSS80C, UDISE, MNRE, ISP, IRRIGATION, NSS71, NSS71E,
-            NSS72, NSS72T, NSS74).
+            NSS72, NSS72T, NSS74, SPPI, OPPI, IPPI).
 
         format:
             Output format - "dict" (default), "df"/"dataframe", or "csv".
@@ -185,6 +185,9 @@ def get_indicators(
         "NSS72": _client.get_nss72_indicators,
         "NSS72T": _client.get_nss72t_indicators,
         "NSS74": _client.get_nss74_indicators,
+        "SPPI": _client.get_sppi_indicators,
+        "OPPI": _client.get_oppi_indicators,
+        "IPPI": _client.get_ippi_indicators,
     }
 
     indicator_method = indicator_methods.get(dataset)
@@ -223,6 +226,8 @@ def get_metadata(
     use_of_energy_balance_code=None,
     sub_indicator_code=None,
     year_type_code=None,
+    sppi_code=None,
+    industry_group_code=None,
     format: str = "dict",
 ):
     """
@@ -270,6 +275,8 @@ def get_metadata(
         "use_of_energy_balance_code": use_of_energy_balance_code,
         "sub_indicator_code": sub_indicator_code,
         "year_type_code": year_type_code,
+        "sppi_code": sppi_code,
+        "industry_group_code": industry_group_code,
     }
     _required = get_required_metadata_params(dataset)
     _missing = [p for p in _required if _param_values.get(p) is None]
@@ -481,10 +488,24 @@ def get_metadata(
             result["api_params"] = get_swagger_param_definitions("NSS72T")
             result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
 
-        elif dataset == "NSS74":
-            result = _client.get_nss74_filters(indicator_code=indicator_code)
-            result["api_params"] = get_swagger_param_definitions("NSS74")
-            result = _check_empty_metadata(result, dataset, indicator_code=indicator_code)
+        elif dataset == "SPPI":
+            result = _client.get_sppi_filters(sppi_code=sppi_code)
+            result["api_params"] = get_swagger_param_definitions("SPPI")
+            result = _check_empty_metadata(result, dataset, sppi_code=sppi_code)
+
+        elif dataset == "OPPI":
+            result = _client.get_oppi_filters(base_year=base_year)
+            result["api_params"] = get_swagger_param_definitions("OPPI")
+            result = _check_empty_metadata(result, dataset, base_year=base_year)
+
+        elif dataset == "IPPI":
+            result = _client.get_ippi_filters()
+            result = _check_empty_metadata(result, dataset)
+            
+        # elif dataset == "IPPI":
+        #     result = _client.get_ippi_filters(industry_group_code=industry_group_code)
+        #     result["api_params"] = get_swagger_param_definitions("IPPI")
+        #     result = _check_empty_metadata(result, dataset, industry_group_code=industry_group_code)
 
         else:
             raise InvalidDatasetError(dataset, VALID_DATASETS)

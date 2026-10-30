@@ -1,0 +1,75 @@
+openapi: 3.0.1
+info:
+  title: Irrigation
+  version: 1.0.0
+servers:
+- url: https://api.mospi.gov.in/
+tags:
+- name: Irrigation
+  description: Indicator-wise irrigation statistics in India.
+paths:
+  /api/irrigation/getIrrigationData:
+    get:
+      summary: Get  data for an indicator
+      description: | 
+        - **Filters (optional):** indicator_code,sub_indicator_code,season_code,state_code,sub_type_code,type_code
+         
+
+      parameters:
+        - in: query
+          name: indicator_code
+          schema: { type: integer }
+        - in: query
+          name: sub_indicator_code
+          schema: { type: integer }
+        - in: query
+          name: season_code
+          schema: { type: integer }
+        - in: query
+          name: state_code
+          schema: { type: integer }
+        - in: query
+          name: sub_type_code
+          schema: { type: integer }
+        - in: query
+          name: type_code
+          schema: { type: integer }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 10 }
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: format
+          schema:
+            type: string
+          description: Set to `xlsx` to download as excel
+
+      responses:
+        "200":
+          description: A JSON array of user information
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+            text/csv:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+x-original-swagger-version: "2.0"

@@ -118,92 +118,6 @@ NSS_DATASETS = [
 
 
 # ============================================================================
-# Helpers
-# ============================================================================
-
-def assert_dict_or_list(dataset: str, filters: dict):
-    """Assert that get_data returns a dictionary or list."""
-
-    result = esankhyiki.get_data(
-        dataset,
-        filters,
-    )
-
-    assert isinstance(result, (dict, list))
-
-
-def assert_dataframe(dataset: str, filters: dict):
-    """Assert that get_data returns a pandas DataFrame."""
-
-    result = esankhyiki.get_data(
-        dataset,
-        filters,
-        format="df",
-    )
-
-    assert isinstance(result, pd.DataFrame)
-
-
-def assert_network_dataset(
-    dataset: str,
-    filters: dict,
-    fmt: str = "dict",
-):
-    """
-    Validate a dataset against the live MoSPI API.
-
-    If the API or requested data is temporarily unavailable,
-    skip the test instead of incorrectly marking it as passed.
-    """
-
-    try:
-        result = esankhyiki.get_data(
-            dataset,
-            filters,
-            format=fmt,
-        )
-
-    except (APIError, NoDataError) as exc:
-        pytest.skip(
-            f"{dataset} API/data unavailable: {exc}"
-        )
-
-    if fmt == "df":
-        assert isinstance(result, pd.DataFrame)
-    else:
-        assert isinstance(result, (dict, list))
-
-
-# ============================================================================
-# Validation
-# ============================================================================
-
-def test_invalid_dataset_raises():
-    """Unknown dataset should raise InvalidDatasetError."""
-
-    with pytest.raises(InvalidDatasetError):
-        esankhyiki.get_data(
-            "FAKE",
-            {},
-        )
-
-
-def test_invalid_filter_raises():
-    """Invalid filter should raise InvalidFilterError."""
-
-    with pytest.raises(InvalidFilterError):
-        esankhyiki.get_data(
-            "PLFS",
-            {
-                "bogus_param": "123",
-                "indicator_code": 1,
-                "frequency_code": 1,
-                "year_type_code": 1,
-            },
-        )
-
-
-# ============================================================================
 # PLFS
 # ============================================================================
 
@@ -380,3 +294,137 @@ def test_mnre_dataframe():
         },
         fmt="df",
     )
+
+# ============================================================================
+# SPPI
+# ============================================================================
+
+def test_sppi_data():
+    """SPPI data retrieval."""
+
+    assert_network_dataset(
+        "SPPI",
+        {
+            "sppi_code": 1,
+            "limit": 1,
+        },
+    )
+
+
+# ============================================================================
+# OPPI
+# ============================================================================
+
+def test_oppi_data():
+    """OPPI data retrieval."""
+
+    assert_network_dataset(
+        "OPPI",
+        {
+            "base_year": "2022-23",
+            "limit": 1,
+        },
+    )
+
+# ============================================================================
+# IPPI
+# ============================================================================
+
+def test_ippi_data():
+    """IPPI data retrieval."""
+
+    assert_network_dataset(
+        "IPPI",
+        {
+            "industry_group_code": 1,
+            "limit": 1,
+        },
+    )
+
+
+
+    
+# ============================================================================
+# Helpers
+# ============================================================================
+
+def assert_dict_or_list(dataset: str, filters: dict):
+    """Assert that get_data returns a dictionary or list."""
+
+    result = esankhyiki.get_data(
+        dataset,
+        filters,
+    )
+
+    assert isinstance(result, (dict, list))
+
+
+def assert_dataframe(dataset: str, filters: dict):
+    """Assert that get_data returns a pandas DataFrame."""
+
+    result = esankhyiki.get_data(
+        dataset,
+        filters,
+        format="df",
+    )
+
+    assert isinstance(result, pd.DataFrame)
+
+
+def assert_network_dataset(
+    dataset: str,
+    filters: dict,
+    fmt: str = "dict",
+):
+    """
+    Validate a dataset against the live MoSPI API.
+
+    If the API or requested data is temporarily unavailable,
+    skip the test instead of incorrectly marking it as passed.
+    """
+
+    try:
+        result = esankhyiki.get_data(
+            dataset,
+            filters,
+            format=fmt,
+        )
+
+    except (APIError, NoDataError) as exc:
+        pytest.skip(
+            f"{dataset} API/data unavailable: {exc}"
+        )
+
+    if fmt == "df":
+        assert isinstance(result, pd.DataFrame)
+    else:
+        assert isinstance(result, (dict, list))
+
+
+# ============================================================================
+# Validation
+# ============================================================================
+
+def test_invalid_dataset_raises():
+    """Unknown dataset should raise InvalidDatasetError."""
+
+    with pytest.raises(InvalidDatasetError):
+        esankhyiki.get_data(
+            "FAKE",
+            {},
+        )
+
+
+def test_invalid_filter_raises():
+    """Invalid filter should raise InvalidFilterError."""
+
+    with pytest.raises(InvalidFilterError):
+        esankhyiki.get_data(
+            "PLFS",
+            {
+                "bogus_param": "123",
+                "indicator_code": 1,
+                "frequency_code": 1,
+                "year_type_code": 1,
+            },
+        )

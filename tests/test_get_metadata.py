@@ -268,3 +268,61 @@ def test_mnre_metadata():
         "MNRE",
         indicator_code=1,
     )
+
+
+
+# ============================================================================
+# IRRIGATION
+# ============================================================================
+
+def test_irrigation_metadata():
+    """IRRIGATION metadata."""
+
+    result = esankhyiki.get_metadata(
+        "IRRIGATION",
+        indicator_code=1,
+    )
+
+    assert isinstance(result, (dict, list))
+
+# ============================================================================
+# SPPI
+# ============================================================================
+
+def test_sppi_metadata():
+    """SPPI metadata."""
+
+    result = esankhyiki.get_metadata(
+        "SPPI",
+        sppi_code=1,
+    )
+
+    assert isinstance(result, (dict, list))
+
+# ============================================================================
+# OPPI
+# ============================================================================
+
+def test_oppi_metadata():
+    """OPPI metadata."""
+
+    result = esankhyiki.get_metadata(
+        "OPPI",
+        base_year=2022-23,
+    )
+
+    assert isinstance(result, (dict, list))
+
+# ============================================================================
+# IPPI
+# ============================================================================
+
+def test_ippi_metadata():
+    """IPPI metadata."""
+
+    result = esankhyiki.get_metadata(
+        "IPPI",
+        industry_group_code=2,
+    )
+
+    assert isinstance(result, (dict, list))

@@ -17,7 +17,7 @@ paths:
       description: |
         - **Required:** `survey_code`, `indicator_code`  
         - **Filters (optional):** state_code, sector_code, gender_code, age_group_code, religion_code, attendance_status_code, attendance_type_code, education_type_code, level_of_attendance_code, level_of_education_code, completed_level_of_education_code,
-        distance_code, item_of_expenditure_code, nature_of_institution_code, proportion_in_the_population_of_age_code
+        distance_code, item_of_expenditure_code, nature_of_institution_code, proportion_in_the_population_of_age_code, enrollment_status_code
 
       parameters:  
         - in: query
@@ -90,6 +90,10 @@ paths:
           name: proportion_in_the_population_of_age_code
           schema: { type: integer }
           description: Enter The Proportion In The Population Of Age code (1-3)  
+        - in: query
+          name: enrollment_status_code
+          schema: { type: integer }
+          description: Enter The Enrollment Status code (1-2)  
           
         - in: query
           name: limit

@@ -14,7 +14,7 @@ VALID_DATASETS = [
     "AISHE", "ASUSE", "GENDER", "NFHS", "ENVSTATS", "RBI",
     "CPIALRL", "HCES", "TUS", "EC","UDISE", "MNRE", "ISP",
     "NSS71", "NSS71E", "NSS72", "NSS72T", "NSS73", "NSS74", "NSS75", "NSS75E", "NSS76", "NSS76C", "NSS77", "NSS78", "NSS79", "NSS80", "NSS80C",
-    # "IRRIGATION", 
+    "IRRIGATION", "SPPI", "OPPI", "IPPI"
 ]
 
 DATASET_SWAGGER = {
@@ -57,7 +57,10 @@ DATASET_SWAGGER = {
     "NSS71E": ("swagger_user_nss71e.yaml", "/api/nss-71/getNss71Records"),
     "NSS72": ("swagger_user_nss72h.yaml", "/api/nss-72/getNss72HesdgRecords"),
     "NSS72T": ("swagger_user_nss72t.yaml", "/api/nss-72t/getNss72TourismRecords"),
-    "NSS74": ("swagger_user_nss74.yaml", "/api/nss-74/getNSS74Records")
+    "NSS74": ("swagger_user_nss74.yaml", "/api/nss-74/getNSS74Records"),
+    "SPPI": ("swagger_sppi.yaml", "/api/sppi/get-records"),
+    "OPPI": ("swagger_user_oppi.yaml", "/api/oppi/getOppiRecords"),
+    "IPPI": ("swagger_user_ippi.yaml", "/api/ippi/getIPPIRecords")
 }
 
 # Dataset name -> API key mapping for get_data routing
@@ -98,7 +101,10 @@ DATASET_API_MAP = {
     "NSS71E": "NSS71E", 
     "NSS72": "NSS72",
     "NSS72T": "NSS72T",
-    "NSS74": "NSS74"
+    "NSS74": "NSS74",
+    "SPPI": "SPPI",
+    "OPPI": "OPPI",
+    "IPPI": "IPPI"
 }
 
 
@@ -169,7 +175,7 @@ def get_swagger_params(dataset: str) -> list:
 _METADATA_PARAMS = frozenset({
     "indicator_code", "base_year", "level", "frequency",
     "classification_year", "frequency_code", "series",
-    "use_of_energy_balance_code", "sub_indicator_code", "year_type_code",
+    "use_of_energy_balance_code", "sub_indicator_code", "year_type_code", "industry_group_code", "sppi_code",
 })
 
 # Swagger param names that map to get_metadata param names

@@ -1,0 +1,66 @@
+openapi: 3.0.1
+info:
+  title: IPPI
+  version: 1.0.0
+servers:
+- url: https://api.mospi.gov.in/
+tags:
+- name: Input Producer Price Index
+  description: Indicator-wise input producer price index statistics in India.
+paths:
+  /api/ippi/getIPPIRecords:
+    get:
+      summary: Get  data for an indicator
+      description: | 
+        - **Filters (optional):** industry_group_code,month_code,year
+         
+
+      parameters:
+        - in: query
+          name: industry_group_code
+          schema: { type: integer }
+        - in: query
+          name: month_code
+          schema: { type: integer }
+        - in: query
+          name: year
+          schema: { type: string }
+        - in: query
+          name: limit
+          schema: { type: integer, default: 10 }
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1 }
+        - in: query
+          name: format
+          schema:
+            type: string
+          description: Set to `xlsx` to download as excel
+
+      responses:
+        "200":
+          description: A JSON array of user information
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+            text/csv:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+x-original-swagger-version: "2.0"

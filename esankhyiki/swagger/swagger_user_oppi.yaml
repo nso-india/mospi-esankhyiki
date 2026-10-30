@@ -1,0 +1,129 @@
+openapi: 3.0.1
+info:
+  title: Output Producer Price Index (OPPI)
+
+  version: 1.0.0
+servers:
+- url: https://api.mospi.gov.in/
+tags:
+- name: Output Producer Price Index.
+  description: Year-Wise Output Producer Price Index (OPPI).
+paths:
+
+  /api/oppi/getOppiRecords:
+    get:
+      tags:
+      - Output Producer Price Index.
+      operationId: OPPIIndicatorValues.
+      # summary: Get  data for an indicator
+      description: |
+        - **Required:** `base_year`  
+        - **Filters (optional):** year, month_code, major_group_code, group_code, sut_product_category_code
+
+      parameters:
+      - name: base_year
+        in: query
+        required: true
+        # description: Enter the Base Year (use 2022-23.)
+        schema: { type: string, enum: [ 2022-23 ] }
+        # schema:  #   type: string
+      - name: year
+        in: query
+        description: Enter the Year (from 2023 to 2026, format YYYY, Comma separated for multiple values)
+        schema:
+          type: string
+      - name: month_code
+        in: query
+        description: Enter the Month code (from 1 to 12, Comma separated for multiple values)
+        schema:
+          type: string
+      - name: major_group_code
+        in: query
+        description: Enter the Major group code (Comma separated for multiple values, Refer MetaData Sheet)
+        schema:
+          type: string
+      - name: group_code
+        in: query
+        description: Enter the Group code (Comma separated for multiple values, Refer MetaData Sheet)
+        schema:
+          type: string
+      - name: sut_product_category_code
+        in: query
+        description: Enter the Sub group code (Comma separated for multiple values, Refer MetaData Sheet)
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Number of records per page (default 10)
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: Enter the page no. (from 1 to n.)
+        schema:
+          type: string
+      - name: Format
+        # required: true
+        in: query
+        schema:
+            type: string
+        description: Set to `xlsx` to download as excel
+        # description: Select the Output format
+        # schema:
+        #   type: string
+        #   default: JSON
+        #   enum:
+        #   - JSON
+        #   - CSV
+        
+      responses:
+        "200":
+          description: A JSON array of user information
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+            text/csv:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid request body
+
+        "409":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Requested item wasn't found!
+      security:
+      - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      description: Bearer token to access these api endpoints
+      name: Authorization
+      in: header
+x-original-swagger-version: "2.0"
